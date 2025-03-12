@@ -18,7 +18,8 @@ const UserSchema = new Schema({
     password:{
         type:String,
         required:[true,'Password is required'],
-        minlength:6
+        minlength:6,
+        maxlength:15
     },
     createdAt:{
         type:Date,

@@ -3,24 +3,29 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 import auth from '../middleware/auth.js';
+import ExpressError from '../Middleware/ErrorHandler.js';
 
 const router = express.Router();
 
+
+router.get('/', (req, res,next) => {
+    res.send("User Routes");
+})
 // @route   POST /api/User/register
 // @desc    Register a new user
 // @access  Public
-router.get('/', (req, res) => {
-    res.send("User Routes");
-})
-
 router.post('/register', async (req, res) => {
     try {
         const { name, email, password } = req.body;
         
+        if(!name || !email || !password){
+            throw new ExpressError('Please fill all the fields', 400);
+        }
         // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-        return res.status(400).json({ message: 'User already exists' });
+        
+            throw new ExpressError('User already exists', 400);
         }
         
         // Hash password
@@ -50,8 +55,8 @@ router.post('/register', async (req, res) => {
         token
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error userRoutes::register' });
+        console.log(error+'error in register');
+        next(error);
     }
 });
 
@@ -65,13 +70,13 @@ router.post('/login', async (req, res) => {
     // Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
-        return res.status(400).json({ message: 'Invalid credentials' });
+        throw new ExpressError('Invalid credentials', 400);
     }
     
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        return res.status(400).json({ message: 'Invalid credentials' });
+        throw new ExpressError('Invalid credentials', 400);
     }
     
     // Generate JWT
@@ -88,10 +93,24 @@ router.post('/login', async (req, res) => {
         token
     });
     } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error userRoutes::login' });
+        console.error(error+'error in login');
+        next(error);
     }
 });
+// @route   GET /api/User/logout
+// @desc    Logout user
+// @access  Private
+router.get('/logout', auth, async (req, res) => {
+    try {
+        // Invalidate the token by removing it from the client side
+        
+        res.json({ message: 'Logged out successfully' });
+    } catch (error) {
+        console.error(error+'error in logout');
+        next(error);
+    }
+})
+
 
 // @route   GET /api/User/profile
 // @desc    Get user profile
@@ -99,10 +118,12 @@ router.post('/login', async (req, res) => {
 router.get('/profile', auth, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('-password');
-        res.json(user);
+        if(!user){
+            throw new ExpressError('User not found', 404);
+        }
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error userRoutes::profile' });
+        console.error(error+'Server error userRoutes::profile');
+        next(error);
     }
 });
 
@@ -132,11 +153,11 @@ router.put('/profile', auth, async (req, res) => {
             email: updatedUser.email
         });
         } else {
-        res.status(404).json({ message: 'User not found' });
+        throw new ExpressError('User not found', 404);
         }
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
+        console.error(error+'Server error userRoutes::update profile');
+        next(error);
     }
 });
 
