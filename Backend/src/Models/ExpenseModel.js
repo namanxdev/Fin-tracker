@@ -15,7 +15,10 @@ const ExpenseSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Category is required'],
         enum: ['Food', 'Transport', 'Entertainment', 'Utilities', 'Health', 'Other'],
-        trim: true
+        trim: true,
+        set: function(value) {
+            return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : value;
+        }
     },
     description: {
         type: String,
@@ -35,14 +38,12 @@ const ExpenseSchema = new mongoose.Schema({
     isRecurring: {
         type: Boolean,
         default: false
+    }
     },
-    location: {
-        type: String,
-        trim: true
-    },
-    }, {
-    timestamps: true
-});
+    {
+        timestamps: true
+    }
+);
 
 // Add virtual for expense's ID (for frontend compatibility)
 ExpenseSchema.virtual('id').get(function() {

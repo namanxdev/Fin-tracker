@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 import auth from '../middleware/auth.js';
-import ExpressError from '../middleware/ErrorHandler.js';
+import {ExpressError} from '../middleware/ErrorHandler.js';
 
 const router = express.Router();
 
@@ -149,7 +149,7 @@ router.get('/profile', auth, async (req, res,next) => {
 // @route   PUT /api/User/profile
 // @desc    Update user profile
 // @access  Private
-router.put('/profile', auth, async (req, res) => {
+router.put('/profile', auth, async (req, res,next) => {
     try {
         const { name, email, password } = req.body;
         

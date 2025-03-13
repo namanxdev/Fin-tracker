@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
-import ExpressErrorHandler from './ErrorHandler.js';
+import {ExpressError} from './ErrorHandler.js';
 
 /**
  * Authentication middleware
@@ -25,7 +25,7 @@ import ExpressErrorHandler from './ErrorHandler.js';
         
         if (!user) {
             // return res.status(401).json({ message: 'User not found' });
-            throw new ExpressErrorHandler('User not found', 404);
+            throw new ExpressError('User not found', 404);
         }
         
         // Set user on request object

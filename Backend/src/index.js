@@ -5,7 +5,7 @@ import userRoutes from "./routes/userRoutes.js"
 import expenseRoutes from "./routes/expenseRoutes.js"
 import budgetRoutes from "./routes/budgetRoutes.js"
 
-import ExpressErrorHandler from "./middleware/ErrorHandler.js"
+import {errorHandler} from "./middleware/ErrorHandler.js"
 import cookieParser from "cookie-parser";
 
 import dotenv from "dotenv"
@@ -31,7 +31,7 @@ app.use('/api/expenses',expenseRoutes);
 app.use('/api/budgets',budgetRoutes);
 
 // Error handling middleware (always place it after your routes)
-app.use(ExpressErrorHandler.handle);
+app.use(errorHandler);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);
