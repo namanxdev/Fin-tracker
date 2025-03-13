@@ -1,5 +1,5 @@
 import express from 'express';
-import Expense from '../models/expenseModel.js';
+import Expense from '../Models/ExpenseModel.js'
 import auth from '../middleware/auth.js';
 import {ExpressError} from '../middleware/ErrorHandler.js';
 import mongoose from 'mongoose';

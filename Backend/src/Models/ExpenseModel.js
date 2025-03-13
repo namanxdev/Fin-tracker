@@ -62,6 +62,6 @@ ExpenseSchema.set('toJSON', {
 ExpenseSchema.index({ user: 1, date: -1 });
 ExpenseSchema.index({ user: 1, category: 1 });
 
-const Expense = mongoose.model('Expense', ExpenseSchema);
+const Expense = mongoose.models.Expense ||mongoose.model('Expense', ExpenseSchema);
 
 export default Expense;
