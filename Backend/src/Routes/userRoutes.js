@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 import auth from '../middleware/auth.js';
-import ExpressError from '../Middleware/ErrorHandler.js';
+import ExpressError from '../middleware/ErrorHandler.js';
 
 const router = express.Router();
 
@@ -14,9 +14,12 @@ router.get('/', (req, res,next) => {
 // @route   POST /api/User/register
 // @desc    Register a new user
 // @access  Public
-router.post('/register', async (req, res) => {
+router.post('/register', async (req, res,next) => {
     try {
         const { name, email, password } = req.body;
+        if(password.length<6){
+            throw new ExpressError('Password must be at least 6 characters', 400);
+        }
         
         if(!name || !email || !password){
             throw new ExpressError('Please fill all the fields', 400);
@@ -44,10 +47,18 @@ router.post('/register', async (req, res) => {
         // Generate JWT
         const token = jwt.sign(
         { id: user._id },
-        process.env.JWT_SECRET || 'your_jwt_secret',
-        { expiresIn: '30d' }
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
         );
         
+        // Set cookie
+        res.cookie('token', token, {
+            httpOnly: true,
+            // secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
+
         res.status(201).json({
         _id: user._id,
         name: user.name,
@@ -55,7 +66,7 @@ router.post('/register', async (req, res) => {
         token
         });
     } catch (error) {
-        console.log(error+'error in register');
+        console.log(error.message +'error in register');
         next(error);
     }
 });
@@ -63,7 +74,7 @@ router.post('/register', async (req, res) => {
 // @route   POST /api/User/login
 // @desc    Authenticate user & get token
 // @access  Public
-router.post('/login', async (req, res) => {
+router.post('/login', async (req, res,next) => {
     try {
     const { email, password } = req.body;
     
@@ -82,10 +93,17 @@ router.post('/login', async (req, res) => {
     // Generate JWT
     const token = jwt.sign(
         { id: user._id },
-        process.env.JWT_SECRET || 'your_jwt_secret',
+        process.env.JWT_SECRET,
         { expiresIn: '7d' }
     );
     
+    //set the token in a cookie
+    res.cookie('token', token, {
+        httpOnly: true,
+        // secure: process.env.NODE_ENV === 'production',
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
     res.json({
         _id: user._id,
         name: user.name,
@@ -100,10 +118,10 @@ router.post('/login', async (req, res) => {
 // @route   GET /api/User/logout
 // @desc    Logout user
 // @access  Private
-router.get('/logout', auth, async (req, res) => {
+router.get('/logout', auth, async (req, res,next) => {
     try {
         // Invalidate the token by removing it from the client side
-        
+        res.clearCookie('token')
         res.json({ message: 'Logged out successfully' });
     } catch (error) {
         console.error(error+'error in logout');
@@ -115,12 +133,13 @@ router.get('/logout', auth, async (req, res) => {
 // @route   GET /api/User/profile
 // @desc    Get user profile
 // @access  Private
-router.get('/profile', auth, async (req, res) => {
+router.get('/profile', auth, async (req, res,next) => {
     try {
         const user = await User.findById(req.user.id).select('-password');
         if(!user){
             throw new ExpressError('User not found', 404);
         }
+        res.json(user);
     } catch (error) {
         console.error(error+'Server error userRoutes::profile');
         next(error);

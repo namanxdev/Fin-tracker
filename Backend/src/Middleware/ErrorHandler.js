@@ -1,5 +1,12 @@
 // ExpressErrorHandler.js
-class ExpressErrorHandler {
+class ExpressErrorHandler extends Error {
+
+    constructor(message, statusCode) {
+        super(message);
+        this.statusCode = statusCode;
+        Error.captureStackTrace(this, this.constructor);
+    }
+
         static handle(err, req, res, next) {
         console.error(err.stack);
     

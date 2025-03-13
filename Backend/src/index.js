@@ -5,7 +5,8 @@ import userRoutes from "./routes/userRoutes.js"
 import expenseRoutes from "./routes/expenseRoutes.js"
 import budgetRoutes from "./routes/budgetRoutes.js"
 
-import ExpressErrorHandler from "./Middleware/ErrorHandler.js"
+import ExpressErrorHandler from "./middleware/ErrorHandler.js"
+import cookieParser from "cookie-parser";
 
 import dotenv from "dotenv"
 
@@ -21,7 +22,7 @@ connectDb();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cookieParser());
 
 // Using Routes
 

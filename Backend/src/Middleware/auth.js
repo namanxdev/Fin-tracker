@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
+import ExpressErrorHandler from './ErrorHandler.js';
 
 /**
  * Authentication middleware
@@ -8,7 +9,7 @@ import User from '../models/userModel.js';
     const auth = async (req, res, next) => {
     try {
         // Get token from header
-        const token = req.header('Authorization')?.replace('Bearer ', '');
+        const token = req.cookies.token
         
         // Check if no token
         if (!token) {
@@ -17,13 +18,14 @@ import User from '../models/userModel.js';
         
         try {
         // Verify token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         
         // Add user from payload
         const user = await User.findById(decoded.id).select('-password');
         
         if (!user) {
-            return res.status(401).json({ message: 'User not found' });
+            // return res.status(401).json({ message: 'User not found' });
+            throw new ExpressErrorHandler('User not found', 404);
         }
         
         // Set user on request object
@@ -36,8 +38,11 @@ import User from '../models/userModel.js';
         res.status(401).json({ message: 'Token is not valid' });
         }
     } catch (error) {
+        // console.error('Auth middleware error:', error);
+        // res.status(500).json({ message: 'Server error' });
+        // Pass the error to the next middleware
         console.error('Auth middleware error:', error);
-        res.status(500).json({ message: 'Server error' });
+        next(error);
     }
 };
 
