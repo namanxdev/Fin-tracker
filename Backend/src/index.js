@@ -5,7 +5,7 @@ import userRoutes from "./Routes/userRoutes.js"
 import expenseRoutes from "./Routes/expenseRoutes.js"
 import budgetRoutes from "./Routes/budgetRoutes.js"
 
-import {errorHandler} from "./middleware/ErrorHandler.js"
+import {errorHandler} from "./utils/ErrorHandler.js"
 import cookieParser from "cookie-parser";
 
 import dotenv from "dotenv"

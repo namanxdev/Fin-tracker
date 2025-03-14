@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
-import {ExpressError} from './ErrorHandler.js';
+import {ExpressError} from '../utils/ErrorHandler.js';
 
 /**
  * Authentication middleware
