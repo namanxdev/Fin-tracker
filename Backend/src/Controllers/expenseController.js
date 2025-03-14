@@ -30,6 +30,22 @@ export const createExpense = async (req, res, next) => {
         return next(new ExpressError("Category is required", 400));
         }
         
+        let parsedDate;
+        if(date){
+            if(date.includes('-') && date.length ===8){
+                const[day,month,year] = date.split('-');
+                parsedDate = new Date(`${year}-${month}-${day}`);
+            }else{
+                parsedDate = new Date(date);
+            }
+            if(isNaN(parsedDate.getTime())){
+                return next(new ExpressError("Invalid date format", 400));
+            }
+        }else{
+            parsedDate = new Date();
+        }
+
+
         const newExpense = new Expense({
         user: req.user.id,
         amount,
