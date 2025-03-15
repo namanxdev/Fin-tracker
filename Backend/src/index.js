@@ -5,6 +5,7 @@ import userRoutes from "./Routes/userRoutes.js"
 import expenseRoutes from "./Routes/expenseRoutes.js"
 import budgetRoutes from "./Routes/budgetRoutes.js"
 import incomeRoutes from "./Routes/incomeRoutes.js"
+import financialRoutes from "./Routes/financialOverviewRoutes.js"
 
 import {errorHandler} from "./utils/ErrorHandler.js"
 import cookieParser from "cookie-parser";
@@ -31,6 +32,7 @@ app.use('/api/User',userRoutes);
 app.use('/api/expenses',expenseRoutes);
 app.use('/api/budgets',budgetRoutes);
 app.use('/api/incomes',incomeRoutes);
+app.use('/api/financial', financialRoutes);
 
 // Error handling middleware (always place it after your routes)
 app.use(errorHandler);

@@ -7,6 +7,10 @@ import mongoose from 'mongoose';
 export const getIncomes = async (req, res, next) => {
     try {
         const incomes = await Income.find({ user: req.user.id }).sort({ date: -1 });
+        if(!incomes || incomes.length === 0) {
+            res.send({ message: "No incomes found" });      
+            return
+        }
         res.json(incomes);
     } catch (error) {
         console.error(error);
