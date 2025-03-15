@@ -1,5 +1,6 @@
 import express from "express"
 import connectDb from "./Config/db.js"
+import cors from "cors"
 
 import userRoutes from "./Routes/userRoutes.js" 
 import expenseRoutes from "./Routes/expenseRoutes.js"
@@ -19,6 +20,14 @@ dotenv.config();
 app.get('/', (req, res) => {
     res.send("Server is running on port 3000");
 });
+
+app.use(cors({
+    // origin: process.env.FRONTEND_URL,
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    // allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+}));
 
 connectDb();
 
