@@ -4,27 +4,37 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useAuthStore from "../store/authStore"; 
 import toast, { Toaster } from 'react-hot-toast';
-import { Mail, KeyRound, Eye, EyeOff } from 'lucide-react';
+import { User, Mail, KeyRound, Eye, EyeOff } from 'lucide-react';
+import useThemeStore from "../store/themeStore";
 
 // Enhanced schema with better error messages
 const schema = z.object({
+    name: z.string().min(3, "Username must be at least 3 characters")
+        .regex(/^[A-Za-z][A-Za-z0-9\-]*$/, "Username can only contain letters, numbers, or dashes"),
     email: z.string().email("Please enter a valid email address"),
     password: z.string().min(8, "Password must be at least 8 characters")
+        .regex(
+        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/,
+        "Password must include at least one number, one lowercase letter, and one uppercase letter"
+        )
 });
 
-function LoginForm() {
+function RegisterForm() {
     const [showPassword, setShowPassword] = useState(false);
+    const isDark = useThemeStore((state) => state.isDark());
     
-    const login = useAuthStore((state) => state.login);
+    // Get the register function from auth store
+    const register = useAuthStore((state) => state.register);
     
     const {
-        register,
+        register: registerField,
         handleSubmit,
         formState: { errors, isSubmitting },
         setError,
         reset
     } = useForm({
         defaultValues: {
+        name: "",
         email: "",
         password: ""
         },
@@ -33,21 +43,17 @@ function LoginForm() {
 
     const onSubmit = async (data) => {
         try {
-            await login(data.email, data.password);
-            toast.success('Successfully LoggedIn!');
-            reset(); 
+            await register(data.email, data.password, data.name);
+            toast.success('Registration successful!');
+            reset();
         } catch (error) {
-            // Error handling remains the same
+            // Error handling
             if (error.response) {
                 const { status, data } = error.response;
                 
-                if (status === 401) {
-                    setError("password", {
-                        message: "Invalid email or password"
-                    });
-                } else if (status === 404) {
+                if (status === 409) {
                     setError("email", {
-                        message: "Email not registered"
+                        message: "Email already exists"
                     });
                 } else if (data?.message) {
                     setError("root", {
@@ -71,9 +77,8 @@ function LoginForm() {
     };
 
     return (
-        <div className="w-full max-w-md mx-auto bg-white rounded-lg">
+        <div className={`w-full ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
             <Toaster />
-            <h2 className="text-2xl font-bold mb-6 mx-4 text-center text-gray-800 p-4 px-6">Log In</h2>
             
             <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                 {/* Show general form errors */}
@@ -83,9 +88,39 @@ function LoginForm() {
                     </div>
                 )}
                 
+                {/* Username Input */}
+                <div>
+                    <label htmlFor="name" className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                        Username
+                    </label>
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <User className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                            id="name"
+                            {...registerField("name")}
+                            type="text"
+                            placeholder="Username"
+                            className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500
+                                ${isDark 
+                                    ? 'bg-gray-700 border-gray-600 text-white' 
+                                    : 'bg-white border-gray-300 text-gray-900'}`}
+                        />
+                    </div>
+                    {errors.name && (
+                        <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
+                    )}
+                    {!errors.name && (
+                        <p className={`mt-1 text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                            Must be 3+ characters (letters, numbers, dashes)
+                        </p>
+                    )}
+                </div>
+                
                 {/* Email Input */}
                 <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="email" className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                         Email
                     </label>
                     <div className="relative">
@@ -94,20 +129,23 @@ function LoginForm() {
                         </div>
                         <input
                             id="email"
-                            {...register("email")}
+                            {...registerField("email")}
                             type="email"
                             placeholder="your@email.com"
-                            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900"
+                            className={`w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500
+                                ${isDark 
+                                    ? 'bg-gray-700 border-gray-600 text-white' 
+                                    : 'bg-white border-gray-300 text-gray-900'}`}
                         />
                     </div>
                     {errors.email && (
-                        <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                        <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
                     )}
                 </div>
 
-                {/* Password Input with Toggle */}
+                {/* Password Input with toggle */}
                 <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="password" className={`block text-sm font-medium mb-1 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                         Password
                     </label>
                     <div className="relative">
@@ -116,10 +154,13 @@ function LoginForm() {
                         </div>
                         <input
                             id="password"
-                            {...register("password")}
+                            {...registerField("password")}
                             type={showPassword ? "text" : "password"}
-                            placeholder="••••••"
-                            className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900"
+                            placeholder="••••••••"
+                            className={`w-full pl-10 pr-10 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500
+                                ${isDark 
+                                    ? 'bg-gray-700 border-gray-600 text-white' 
+                                    : 'bg-white border-gray-300 text-gray-900'}`}
                         />
                         <button
                             type="button"
@@ -127,22 +168,20 @@ function LoginForm() {
                             onClick={togglePasswordVisibility}
                         >
                             {showPassword ? (
-                                <EyeOff className="h-5 w-5 text-gray-500 hover:text-gray-700" />
+                                <EyeOff className={`h-5 w-5 ${isDark ? 'text-gray-400' : 'text-gray-500'} hover:text-gray-700`} />
                             ) : (
-                                <Eye className="h-5 w-5 text-gray-500 hover:text-gray-700" />
+                                <Eye className={`h-5 w-5 ${isDark ? 'text-gray-400' : 'text-gray-500'} hover:text-gray-700`} />
                             )}
                         </button>
                     </div>
                     {errors.password && (
-                        <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+                        <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
                     )}
-                </div>
-
-                {/* Forgot Password Link */}
-                <div className="flex items-center justify-end">
-                    <a href="#" className="text-sm text-emerald-600 hover:text-emerald-500">
-                        Forgot your password?
-                    </a>
+                    {!errors.password && (
+                        <p className={`mt-1 text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                            Min. 8 characters with number, lowercase & uppercase
+                        </p>
+                    )}
                 </div>
 
                 {/* Submit Button */}
@@ -157,10 +196,10 @@ function LoginForm() {
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            Logging in...
+                            Registering...
                         </span>
                     ) : (
-                        "Log In"
+                        "Create Account"
                     )}
                 </button>
             </form>
@@ -168,4 +207,4 @@ function LoginForm() {
     );
 }
 
-export default LoginForm;
+export default RegisterForm;
