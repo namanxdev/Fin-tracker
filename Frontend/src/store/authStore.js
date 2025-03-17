@@ -18,7 +18,7 @@ const useAuthStore = create((set) => ({
         try {
             const response = await api.post('/login', { email, password });
             set({ 
-                user: response.data.user, 
+                user: response.data, 
                 isAuthenticated: true, 
                 isLoading: false 
             });
@@ -39,7 +39,7 @@ const useAuthStore = create((set) => ({
         try {
             const response = await api.post('/register', { email, password, name });
             set({ 
-                user: response.data.user, 
+                user: response.data, 
                 isAuthenticated: true, 
                 isLoading: false 
             });

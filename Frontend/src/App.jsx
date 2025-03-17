@@ -6,7 +6,7 @@ import Header from './Components/Layout/Header';
 import useAuthStore from './store/authStore';
 import useThemeStore from './store/themeStore';
 import { useEffect } from 'react';
-import { ThemeProvider } from './Components/Theme/ThemeProvider'; 
+import { Toaster } from 'react-hot-toast';
 
 const ProtectedRoute = ({children}) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -21,6 +21,7 @@ const ProtectedRoute = ({children}) => {
 function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
   const initializeTheme = useThemeStore((state) => state.initializeTheme);
+  const isDark = useThemeStore((state) => state.isDark());
   
   useEffect(() => {
     checkAuth();
@@ -28,18 +29,35 @@ function App() {
   }, [checkAuth, initializeTheme]);
 
   return (
-    <ThemeProvider> {/* Wrap the entire app with ThemeProvider */}
+    <>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000
+        }}
+      />
       <Router>
         <Header />
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={< RegisterPage/>} />
-
-        </Routes>
+        <main className={`min-h-screen pt-4 ${isDark ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"}`}>
+          <div className="w-full px-8 sm:px-12 lg:px-16">
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={< RegisterPage/>} />
+              
+              {/* Protected Routes */}
+{/*     {/* <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } /> */}
+              {/* Add other routes */}
+            </Routes>
+          </div>
+        </main>
       </Router>
-    </ThemeProvider>
+    </>
   )
 }
 
