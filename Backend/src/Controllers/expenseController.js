@@ -21,8 +21,12 @@ export const getExpenses = async (req, res, next) => {
 // @access  Private
 export const createExpense = async (req, res, next) => {
     try {
-        const { amount, category, description, date, paymentMethod, isRecurring } = req.body;
+        const { title,amount, category, description, date, paymentMethod, isRecurring } = req.body;
         
+        if (!title) {
+            return next(new ExpressError("Title is required", 400));
+        }
+
         if (!amount) {
         return next(new ExpressError("Amount is required", 400));
         }
@@ -48,6 +52,7 @@ export const createExpense = async (req, res, next) => {
 
         const newExpense = new Expense({
         user: req.user.id,
+        title,
         amount,
         category,
         description,
@@ -164,9 +169,9 @@ export const getCategorySummary = async (req, res, next) => {
         { $sort: { total: -1 } }
         ]);
         
-        if (categorySummary.length === 0) {
-        return next(new ExpressError("No categories found", 404));
-        }
+        // if (categorySummary.length === 0) {
+        // return next(new ExpressError("No categories found", 404));
+        // }
         
         res.json(categorySummary);
     } catch (error) {

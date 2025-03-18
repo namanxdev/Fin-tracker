@@ -6,6 +6,14 @@ const ExpenseSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    title: {
+        type: String,
+        required: [true, 'Title is required'],
+        trim: true,
+        set: function(value) {
+            return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : value;
+        }
+    },
     amount: {
         type: Number,
         required: [true, 'Amount is required'],
@@ -14,7 +22,7 @@ const ExpenseSchema = new mongoose.Schema({
     category: {
         type: String,
         required: [true, 'Category is required'],
-        enum: ['Food', 'Transport', 'Entertainment', 'Utilities', 'Health', 'Other'],
+        enum: ['Food', 'Transport', 'Entertainment', 'Utilities', 'Health','Travel','Other'],
         trim: true,
         set: function(value) {
             return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : value;

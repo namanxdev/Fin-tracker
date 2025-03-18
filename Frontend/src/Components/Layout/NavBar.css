@@ -42,3 +42,37 @@
       transform: translate(0px, 0px);
     }
   }
+  /* Add these media queries at the end of your file */
+
+/* Adjust glow positioning for smaller screens */
+@media (max-width: 768px) {
+  .nav-glow-1 {
+    width: 100px;
+    height: 100px;
+    filter: blur(18px);
+    opacity: 0.4;
+  }
+  
+  .nav-glow-2 {
+    width: 70px;
+    height: 70px;
+    filter: blur(15px);
+    opacity: 0.5;
+  }
+}
+
+/* For the mobile menu animation */
+@keyframes slideDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.mobile-menu {
+  animation: slideDown 0.2s ease-out forwards;
+}

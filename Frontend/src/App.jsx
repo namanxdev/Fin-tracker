@@ -1,5 +1,6 @@
 import LoginPage from './pages/Auth/LoginPage'
 import RegisterPage from './pages/Auth/RegisterPage';
+import ExpensesPage from './pages/ExpensesPage';
 import HomePage from './pages/HomePage';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Header from './Components/Layout/Header';
@@ -37,17 +38,17 @@ const AppLayout = () => {
       ) : (
         // For other pages, use the styled container
         <main className={`min-h-screen ${isDark ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"}`}>
-          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage/>} />
               
               {/* Protected Routes */}
-              {/* <Route path="/dashboard" element={
+              <Route path="/expenses" element={
                 <ProtectedRoute>
-                  <Dashboard />
+                  <ExpensesPage/>
                 </ProtectedRoute>
-              } /> */}
+              } />
               {/* Add other routes */}
             </Routes>
           </div>
@@ -71,7 +72,7 @@ function App() {
       <Toaster
         position="top-right"
         toastOptions={{
-          duration: 3000,
+          duration: 1500,
           success: {
             style: {
               background: '#10b981',
