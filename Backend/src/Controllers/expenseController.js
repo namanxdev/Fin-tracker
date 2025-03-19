@@ -96,7 +96,7 @@ export const createExpense = async (req, res, next) => {
 // @access  Private
 export const updateExpense = async (req, res, next) => {
     try {
-        const { amount, category, description, date, paymentMethod, isRecurring } = req.body;
+        const { title,amount, category, description, date, paymentMethod, isRecurring } = req.body;
         
         // Find expense by ID
         let expense = await Expense.findOne({
@@ -116,6 +116,7 @@ export const updateExpense = async (req, res, next) => {
         }
         
         // Update expense fields
+        expense.title = title || expense.title;
         expense.amount = amount || expense.amount;
         expense.category = category || expense.category;
         expense.description = description || expense.description;
@@ -314,6 +315,10 @@ export const getDateRangeExpenses = async (req, res, next) => {
         
         if (isNaN(start.getTime()) || isNaN(end.getTime())) {
         return next(new ExpressError("Invalid date format", 400));
+        }
+
+        if(start > end){
+            return next(new ExpressError("Start date cannot be greater than end date", 400));
         }
         
         const expenses = await Expense.find({

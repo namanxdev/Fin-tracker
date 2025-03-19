@@ -70,12 +70,12 @@ function ExpensesForm({ onExpenseAdded }) {
 
     return (
         <div>
-            <form className="gap-2 flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+            <form className="gap-2 flex flex-col " onSubmit={handleSubmit(onSubmit)}>
                 <input
                     {...register("title", { required: true })}
                     type="text"
                     placeholder="Title"
-                    className="border p-2 rounded-md"
+                    className="border p-2 rounded-md border-red-500"
                 />
                 {errors.title && <div className="text-red-500">{errors.title.message}</div>}
 
@@ -85,7 +85,7 @@ function ExpensesForm({ onExpenseAdded }) {
                     step="0.01"
                     min="0"
                     placeholder="Amount"
-                    className="border p-2 rounded-md"
+                    className="border p-2 rounded-md border-red-500"
                 />
                 {errors.amount && <div className="text-red-500">{errors.amount.message}</div>}
 
@@ -93,36 +93,27 @@ function ExpensesForm({ onExpenseAdded }) {
                     {...register("date")}
                     type="date"
                     placeholder="Date"
-                    className="border p-2 rounded-md"
+                    className="border p-2 rounded-md border-red-500"
                 />
 
                 {/* Hidden input to store the actual category value */}
                 <input type="hidden" {...register("category")} />
                 
                 {/* Category Dropdown */}
-                <div className="relative">
-                    <div className="dropdown dropdown-bottom w-full">
-                        <div 
-                            tabIndex={0} 
-                            role="button" 
-                            className="border p-2 rounded-md w-full text-left flex justify-between items-center"
-                        >
-                            {selectedCategory || "Select Category"} 
-                            <span className="transform rotate-180"><MoveUp /></span>
-                        </div>
-                        <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-20 w-full p-2 shadow-lg mt-1">
-                            {categories.map((cat, index) => (
-                                <li key={index}>
-                                    <a 
-                                        onClick={() => handleCategorySelect(cat)}
-                                        className={`py-2 ${selectedCategory === cat ? "bg-gray-100 font-medium" : ""}`}
-                                    >
-                                        {cat}
-                                    </a>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                <div className="form-control w-full">
+                    <select 
+                        className="select select-error w-full"
+                        {...register("category")}
+                        defaultValue=""
+                    >
+                        <option disabled value="">Select Category</option>
+                        {categories.map((cat, index) => (
+                        <option key={index} value={cat}>
+                            {cat}
+                        </option>
+                        ))}
+                    </select>
+                    {errors.category && <div className="text-red-500">{errors.category.message}</div>}
                 </div>
 
                 <button 

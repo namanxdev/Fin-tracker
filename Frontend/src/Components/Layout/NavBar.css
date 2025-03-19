@@ -31,6 +31,40 @@
     animation: float-nav 12s ease-in-out infinite reverse;
   }
   
+/* View selector styling */
+.view-selector {
+  position: relative;
+  overflow: hidden;
+}
+
+.view-glow-1 {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.4) 0%, rgba(16, 185, 129, 0) 70%);
+  filter: blur(25px);
+  opacity: 0.5;
+  left: -40px;
+  top: -40px;
+  z-index: 1;
+  animation: float-nav 8s ease-in-out infinite;
+}
+
+.view-glow-2 {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(5, 150, 105, 0.3) 0%, rgba(5, 150, 105, 0) 70%);
+  filter: blur(20px);
+  opacity: 0.6;
+  right: -20px;
+  bottom: -30px;
+  z-index: 1;
+  animation: float-nav 12s ease-in-out infinite reverse;
+}
+
   @keyframes float-nav {
     0% {
       transform: translate(0px, 0px);
@@ -61,6 +95,10 @@
   }
 }
 
+.mobile-menu {
+  animation: slideDown 0.2s ease-out forwards;
+}
+
 /* For the mobile menu animation */
 @keyframes slideDown {
   from {
@@ -71,8 +109,4 @@
     transform: translateY(0);
     opacity: 1;
   }
-}
-
-.mobile-menu {
-  animation: slideDown 0.2s ease-out forwards;
 }

@@ -63,7 +63,7 @@ function ExpenseAreaChart() {
                 })
                 .sort((a, b) => new Date(a.date) - new Date(b.date));
             
-            console.log("Chart data:", formattedData); // Debug
+            
             setChartData(formattedData);
         } catch (err) {
             console.error("Error processing chart data:", err);

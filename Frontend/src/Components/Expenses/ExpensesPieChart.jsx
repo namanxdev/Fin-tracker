@@ -17,21 +17,21 @@ function ExpensesPieChart() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log("Fetching category data...");
+                // console.log("Fetching category data...");
                 const data = await getCategorySummary();
-                console.log("Raw API response:", data);
+                // console.log("Raw API response:", data);
                 
                 // Check if we're getting valid data
                 if (data && Array.isArray(data)) {
                     // Format: [{ _id: "Category", total: 123.45 }, ...]
                     const transformed = data.map(item => {
-                        console.log("Processing item:", item);
+                        // console.log("Processing item:", item);
                         return {
                             name: item._id || 'Uncategorized',
                             value: parseFloat(parseFloat(item.total || 0).toFixed(2))
                         };
                     });
-                    console.log("Transformed chart data:", transformed);
+                    
                     setCategoryData(transformed);
                 } else {
                     console.error("Invalid data format received:", data);
@@ -52,8 +52,6 @@ function ExpensesPieChart() {
             // Store the first payload item
             const item = payload[0];
             
-            // Debug what we're getting
-            console.log("Tooltip payload:", payload);
             
             return (
                 <div className={`p-3 rounded-md shadow-md ${
@@ -71,9 +69,6 @@ function ExpensesPieChart() {
         return null;
     };
 
-    // Calculate total for percentage display
-    const Sumtotal = categoryData.reduce((sum, item) => sum + item.value, 0);
-    console.log("Total sum of category data:", Sumtotal);
     // Custom legend that shows percentages
     const renderCustomizedLegend = (props) => {
         const { payload } = props;
@@ -83,9 +78,7 @@ function ExpensesPieChart() {
                 isDark ? 'text-gray-200' : 'text-gray-700'
             }`}>
                 {payload.map((entry, index) => {
-                    // FIX: Calculate percentage correctly using entry.value / Sumtotal
-                    console.log("Payload entry:", entry);
-                    console.log("percentage:",entry.payload.percent*100);
+                    
                     const percent= Number(entry.payload.percent*100).toFixed(1);
                     
                     const color = entry.color
