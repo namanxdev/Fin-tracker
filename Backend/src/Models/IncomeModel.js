@@ -6,6 +6,14 @@ const IncomeSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    title:{
+        type: String,
+        required: [true, 'Title is required'],
+        trim: true,
+        set: function(value) {
+            return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : value;
+        }
+    },
     amount: {
         type: Number,
         required: [true, 'Amount is required'],
@@ -63,6 +71,6 @@ IncomeSchema.set('toJSON', {
 IncomeSchema.index({ user: 1, date: -1 });
 IncomeSchema.index({ user: 1, category: 1 });
 
-const Income = mongoose.models.Income || mongoose.model('Income', IncomeSchema);
+const Income = mongoose.model('Income', IncomeSchema);
 
 export default Income;

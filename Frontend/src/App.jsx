@@ -1,6 +1,7 @@
 import LoginPage from './pages/Auth/LoginPage'
 import RegisterPage from './pages/Auth/RegisterPage';
 import ExpensesPage from './pages/ExpensesPage';
+import IncomePage from './pages/IncomePage';
 import HomePage from './pages/HomePage';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Header from './Components/Layout/Header';
@@ -31,9 +32,7 @@ const AppLayout = () => {
       {isHomePage ? (
         // For homepage, use full width without extra containers
         <main className="min-h-screen">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-          </Routes>
+          <HomePage />
         </main>
       ) : (
         // For other pages, use the styled container
@@ -41,15 +40,22 @@ const AppLayout = () => {
           <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <Routes>
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage/>} />
+              <Route path="/register" element={<RegisterPage />} />
               
               {/* Protected Routes */}
               <Route path="/expenses" element={
                 <ProtectedRoute>
-                  <ExpensesPage/>
+                  <ExpensesPage />
                 </ProtectedRoute>
               } />
-              {/* Add other routes */}
+              
+              <Route path="/income" element={
+                <ProtectedRoute>
+                  <IncomePage />
+                </ProtectedRoute>
+              } />
+              
+              {/* Add other protected routes here */}
             </Routes>
           </div>
         </main>
@@ -88,7 +94,10 @@ function App() {
         }}
       />
       <Router>
-        <AppLayout />
+        <Routes>
+          <Route path="/" element={<AppLayout />} />
+          <Route path="/*" element={<AppLayout />} />
+        </Routes>
       </Router>
     </>
   )

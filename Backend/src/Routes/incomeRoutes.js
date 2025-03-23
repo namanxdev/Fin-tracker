@@ -12,39 +12,18 @@ import {
 
 const router = express.Router();
 
-// @route   GET /api/incomes
-// @desc    Get all incomes for a user
-// @access  Private
+// Basic routes
 router.get('/', auth, getIncomes);
-
-// @route   POST /api/incomes
-// @desc    Create a new income
-// @access  Private
 router.post('/', auth, createIncome);
 
-// @route   GET /api/incomes/:id
-// @desc    Get income by ID
-// @access  Private
-router.get('/:id', auth, getIncomeById);
-
-// @route   PUT /api/incomes/:id
-// @desc    Update an income
-// @access  Private
-router.put('/:id', auth, updateIncome);
-
-// @route   DELETE /api/incomes/:id
-// @desc    Delete an income
-// @access  Private
-router.delete('/:id', auth, deleteIncome);
-
-// @route   GET /api/incomes/summary/categories
-// @desc    Get income summary by categories
-// @access  Private
+// Summary routes - THESE MUST COME BEFORE ID ROUTES
 router.get('/summary/categories', auth, getCategorySummary);
-
-// @route   GET /api/incomes/summary/monthly
-// @desc    Get monthly income summary
-// @access  Private
 router.get('/summary/monthly', auth, getMonthlySummary);
+router.get('/summary/yearly', auth, getMonthlySummary);
+
+// ID-specific routes - THESE MUST COME LAST
+router.get('/:id', auth, getIncomeById);
+router.put('/:id', auth, updateIncome);
+router.delete('/:id', auth, deleteIncome);
 
 export default router;

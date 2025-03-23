@@ -7,11 +7,11 @@ import mongoose from 'mongoose';
 export const getIncomes = async (req, res, next) => {
     try {
         const incomes = await Income.find({ user: req.user.id }).sort({ date: -1 });
-        if(!incomes || incomes.length === 0) {
-            res.send({ message: "No incomes found" });      
-            return
-        }
-        res.json(incomes);
+        // if(!incomes || incomes.length === 0) {
+        //     res.send({ message: "No incomes found" });      
+        //     return
+        // }
+        res.json(incomes|| []);
     } catch (error) {
         console.error(error);
         next(new ExpressError("Unable to get incomes", 500));
@@ -22,7 +22,7 @@ export const getIncomes = async (req, res, next) => {
 // @access  Private
 export const createIncome = async (req, res, next) => {
     try {
-        const { amount, category, description, date, source, isRecurring, recurringFrequency } = req.body;
+        const {title ,amount, category, description, date, source, isRecurring, recurringFrequency } = req.body;
         
         if (!amount) {
             return next(new ExpressError("Amount is required", 400));
@@ -48,6 +48,7 @@ export const createIncome = async (req, res, next) => {
 
         const newIncome = new Income({
             user: req.user.id,
+            title,
             amount,
             category,
             description,
@@ -92,7 +93,7 @@ export const getIncomeById = async (req, res, next) => {
 // @access  Private
 export const updateIncome = async (req, res, next) => {
     try {
-        const { amount, category, description, date, source, isRecurring, recurringFrequency } = req.body;
+        const { title,amount, category, description, date, source, isRecurring, recurringFrequency } = req.body;
         
         let income = await Income.findOne({
             _id: req.params.id,
@@ -104,6 +105,7 @@ export const updateIncome = async (req, res, next) => {
         }
         
         // Update income fields
+        income.title = title || income.title;
         income.amount = amount || income.amount;
         income.category = category || income.category;
         income.description = description !== undefined ? description : income.description;
@@ -186,5 +188,27 @@ export const getMonthlySummary = async (req, res, next) => {
     } catch (error) {
         console.error(error);
         next(new ExpressError("Failed to get monthly summary", 500));
+    }
+};
+
+// @desc    Get income summary for a year
+// @access  Private
+export const getYearlySummary = async (req, res, next) => {
+    try {
+        const yearlySummary = await Income.aggregate([
+            { $match: { user: new mongoose.Types.ObjectId(req.user.id) } },
+            {
+                $group: {
+                    _id: { $year: '$date' },  // Group by year only
+                    total: { $sum: '$amount' }
+                }
+            },
+            { $sort: { '_id': 1 } }  // Sort ascending by year
+        ]);
+        
+        res.json(yearlySummary);
+    } catch (error) {
+        console.error(error);
+        next(new ExpressError("Failed to get yearly summary", 500));
     }
 };
