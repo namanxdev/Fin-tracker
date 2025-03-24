@@ -3,13 +3,14 @@ import RegisterPage from './pages/Auth/RegisterPage';
 import ExpensesPage from './pages/ExpensesPage';
 import IncomePage from './pages/IncomePage';
 import HomePage from './pages/HomePage';
+import BudgetPage from './pages/BudgetPage';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Header from './Components/Layout/Header';
 import useAuthStore from './store/authStore';
 import useThemeStore from './store/themeStore';
 import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
-
+// TODO: make all pages responsive add payment methods and add a settings page
 const ProtectedRoute = ({children}) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
@@ -55,6 +56,12 @@ const AppLayout = () => {
                 </ProtectedRoute>
               } />
               
+              <Route path="/budget" element={
+                <ProtectedRoute>
+                    <BudgetPage />
+                </ProtectedRoute>
+              } />
+
               {/* Add other protected routes here */}
             </Routes>
           </div>

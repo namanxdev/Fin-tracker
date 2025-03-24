@@ -8,6 +8,8 @@ const BudgetSchema = new mongoose.Schema({
     },
     category: {
         type: String,
+        enum: ['Food', 'Housing', 'Transport', 'Travel', 'Entertainment', 
+                'Utilities', 'Health', 'Education', 'Personal', 'Shopping', 'Other'],
         required: [true, 'Category is required'],
         trim: true
     },
@@ -28,23 +30,11 @@ const BudgetSchema = new mongoose.Schema({
     endDate: {
         type: Date
     },
-    rollover: {
-        type: Boolean,
-        default: false
-    },
-    notes: {
+    description: {
         type: String,
         trim: true
-    },
-    color: {
-        type: String,
-        default: '#3498db'
-    },
-    isActive: {
-        type: Boolean,
-        default: true
-    }
-    }, {
+    }},
+    {
     timestamps: true
 });
 
@@ -57,22 +47,22 @@ BudgetSchema.virtual('calculatedEndDate').get(function() {
     
     switch (this.period) {
         case 'daily':
-        end.setDate(start.getDate() + 1);
+            end.setDate(start.getDate() + 1);
         break;
         case 'weekly':
-        end.setDate(start.getDate() + 7);
+            end.setDate(start.getDate() + 7);
         break;
         case 'monthly':
-        end.setMonth(start.getMonth() + 1);
+            end.setMonth(start.getMonth() + 1);
         break;
         case 'quarterly':
-        end.setMonth(start.getMonth() + 3);
+            end.setMonth(start.getMonth() + 3);
         break;
         case 'yearly':
-        end.setFullYear(start.getFullYear() + 1);
+            end.setFullYear(start.getFullYear() + 1);
         break;
         default:
-        end.setMonth(start.getMonth() + 1);
+            end.setMonth(start.getMonth() + 1);
     }
     
 return end;

@@ -22,7 +22,7 @@ const ExpenseSchema = new mongoose.Schema({
     category: {
         type: String,
         required: [true, 'Category is required'],
-        enum: ['Food', 'Transport', 'Entertainment', 'Utilities', 'Health','Travel','Other'],
+        enum: ['Food','Housing','Transport','Travel','Entertainment', 'Utilities', 'Health','Education','Personal','Shopping','Other'],
         trim: true,
         set: function(value) {
             return value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : value;

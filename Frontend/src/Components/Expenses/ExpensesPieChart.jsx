@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import useExpenseStore from "../../store/expenseStore";
 import useThemeStore from "../../store/themeStore"; 
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
-
-// Custom colors for the pie chart
-const COLORS = ['#ef4444', '#f97316', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
+import { categoryColors, categoryIcons, getCategoryColor } from '../../Components/Theme/ThemeIcons';
 
 function ExpensesPieChart() {
     const isDark = useThemeStore(state => state.isDark());
@@ -46,20 +44,24 @@ function ExpensesPieChart() {
         fetchData();
     }, [getCategorySummary]);
 
-    // Custom tooltip
+    // Custom tooltip enhanced with icons
     const CustomTooltip = ({ active, payload }) => {
         if (active && payload && payload.length) {
-            // Store the first payload item
             const item = payload[0];
-            
+            const category = item.name;
+            const value = item.value;
             
             return (
                 <div className={`p-3 rounded-md shadow-md ${
                     isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'
                 }`}>
-                                        <p className="font-bold">{item.name}</p>
-                    {/* Use ITEM.value - not data.value */}
-                    <p className="text-sm">${item.value.toLocaleString('en-US', {
+                    <div className="flex items-center gap-2 mb-1">
+                        <span className="text-lg" style={{ color: getCategoryColor(category) }}>
+                            {categoryIcons[category]}
+                        </span>
+                        <p className="font-bold">{category}</p>
+                    </div>
+                    <p className="text-sm">${value.toLocaleString('en-US', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
                     })}</p>
@@ -69,7 +71,7 @@ function ExpensesPieChart() {
         return null;
     };
 
-    // Custom legend that shows percentages
+    // Enhanced legend with icons
     const renderCustomizedLegend = (props) => {
         const { payload } = props;
         
@@ -78,10 +80,9 @@ function ExpensesPieChart() {
                 isDark ? 'text-gray-200' : 'text-gray-700'
             }`}>
                 {payload.map((entry, index) => {
-                    
-                    const percent= Number(entry.payload.percent*100).toFixed(1);
-                    
-                    const color = entry.color
+                    const category = entry.value;
+                    const percent = Number(entry.payload.percent*100).toFixed(1);
+                    const color = getCategoryColor(category);
                     
                     return (
                         <li key={`item-${index}`} className="flex items-center gap-2">
@@ -89,7 +90,9 @@ function ExpensesPieChart() {
                                 className="w-3 h-3 rounded-full" 
                                 style={{ backgroundColor: color }}
                             />
-                            <span>{entry.value} : {percent}%</span>
+                            <span className="flex items-center gap-1">
+                                {categoryIcons[category]} {category}: {percent}%
+                            </span>
                         </li>
                     );
                 })}
@@ -116,7 +119,7 @@ function ExpensesPieChart() {
                     <p>No expense data available</p>
                 </div>
             ) : (
-                <div className="w-full h-72">
+                <div className="w-full h-100">
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <Pie
@@ -131,7 +134,7 @@ function ExpensesPieChart() {
                                 {categoryData.map((entry, index) => (
                                     <Cell 
                                         key={`cell-${index}`} 
-                                        fill={COLORS[index % COLORS.length]} 
+                                        fill={getCategoryColor(entry.name)} 
                                     />
                                 ))}
                             </Pie>

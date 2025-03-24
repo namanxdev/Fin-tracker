@@ -9,8 +9,9 @@ export const getBudgets = async (req, res, next) => {
     try {
         const budgets = await Budget.find({ user: req.user.id });
 
-        if (!budgets || budgets.length === 0) {
-        return next(new ExpressError('No budgets found', 404));
+
+        if (!budgets) {
+            budgets = [];
         }
 
         res.json(budgets);
@@ -69,54 +70,74 @@ export const getBudgetStatuses = async (req, res, next) => {
         // Fetch all budgets for the authenticated user
         const budgets = await Budget.find({ user: req.user.id });
         if (!budgets || budgets.length === 0) {
-        return next(new ExpressError("No budgets found", 404));
+            return res.status(200).json({ message: "No budgets found" });
         }
 
         // Process each budget
         const budgetsStatus = await Promise.all(budgets.map(async (budget) => {
-        // Use the defined start date, and determine the end date:
-        // if budget.endDate is provided, use it; otherwise, use the calculatedEndDate virtual.
-        const start = budget.startDate;
-        const end = budget.endDate ? budget.endDate : budget.calculatedEndDate;
+            // Important fix: Ensure we have proper date objects
+            const startDate = new Date(budget.startDate);
+            const endDate = budget.endDate ? new Date(budget.endDate) : budget.calculatedEndDate;
+            
+            // For monthly budgets, we should consider the full month
+            let adjustedStartDate = startDate;
+            let adjustedEndDate = endDate;
+            
+            if (budget.period === 'monthly') {
+                // Set start date to beginning of month for "monthly" budgets
+                adjustedStartDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+                
+                // Set end date to end of month for "monthly" budgets
+                adjustedEndDate = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0);
+            }
+            
+            
+            // Use an aggregation pipeline to sum expenses for this budget's category and time period
+            // IMPORTANT: Check if your Expense model uses 'date' or 'createdAt' field
+            const expensesAgg = await Expense.aggregate([
+                {
+                    $match: {
+                        user: new mongoose.Types.ObjectId(req.user.id),
+                        category: budget.category,
+                        // Use adjusted date range for better results
+                        date: { $gte: adjustedStartDate, $lte: adjustedEndDate }
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        totalSpent: { $sum: '$amount' }
+                    }
+                }
+            ]);
+            
+            // console.log(`Found spending for ${budget.category}: ${
+            //     expensesAgg.length > 0 ? expensesAgg[0].totalSpent : 'No expenses found'
+            // }`);
+            
+            const totalSpent = expensesAgg.length > 0 ? expensesAgg[0].totalSpent : 0;
 
-        // Use an aggregation pipeline to sum expenses for this budget's category and time period
-        const expensesAgg = await Expense.aggregate([
-            {
-            $match: {
-                user: new mongoose.Types.ObjectId(req.user.id),
+            // Determine the status based on spending vs. limit
+            let status;
+            if (totalSpent > budget.limit) {
+                status = "Over Budget";
+            } else if (totalSpent === budget.limit) {
+                status = "At Budget";
+            } else {
+                status = "Under Budget";
+            }
+
+            // Return a summary object for this budget
+            return {
+                budgetId: budget._id,
                 category: budget.category,
-                date: { $gte: new Date(start), $lte: new Date(end) }
-            }
-            },
-            {
-            $group: {
-                _id: null,
-                totalSpent: { $sum: '$amount' }
-            }
-            }
-        ]);
-        const totalSpent = expensesAgg.length > 0 ? expensesAgg[0].totalSpent : 0;
-
-        // Determine the status based on spending vs. limit
-        let status;
-        if (totalSpent > budget.limit) {
-            status = "Over Budget";
-        } else if (totalSpent === budget.limit) {
-            status = "At Budget";
-        } else {
-            status = "Under Budget";
-        }
-
-        // Return a summary object for this budget
-        return {
-            budgetId: budget._id,
-            category: budget.category,
-            limit: budget.limit,
-            startDate: budget.startDate,
-            endDate: budget.endDate ? budget.endDate : budget.calculatedEndDate,
-            totalSpent,
-            status
-        };
+                limit: budget.limit,
+                period: budget.period,
+                startDate: adjustedStartDate,
+                endDate: adjustedEndDate,
+                totalSpent,
+                status
+            };
         }));
 
         res.json(budgetsStatus);

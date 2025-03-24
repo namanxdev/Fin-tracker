@@ -4,7 +4,6 @@ import useExpenseStore from '../../store/expenseStore'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-hot-toast'
-import { MoveUp } from 'lucide-react'
 
 // Update your schema
 const schema = z.object({
@@ -22,7 +21,11 @@ const schema = z.object({
 
 function ExpensesForm({ onExpenseAdded }) {
     // Categories array
-    const categories = ['Food', 'Transport', 'Entertainment', 'Utilities', 'Health', 'Travel', 'Other']
+    const categories = [
+        'Food', 'Housing', 'Transport', 'Entertainment', 
+        'Health', 'Education', 'Personal', 'Utilities', 
+        'Shopping', 'Travel',  'Other'
+    ];
 
     const { register, handleSubmit, reset, formState: { errors }, setValue, watch } = useForm({
         defaultValues: {
@@ -31,9 +34,6 @@ function ExpensesForm({ onExpenseAdded }) {
         },
         resolver: zodResolver(schema),
     });
-
-    // Watch category to show the current selection
-    const selectedCategory = watch("category");
 
     // Get createExpense directly to avoid infinite loop
     const createExpense = useExpenseStore(state => state.createExpense);
@@ -62,11 +62,6 @@ function ExpensesForm({ onExpenseAdded }) {
             console.error(error);
         }
     }
-
-    // Handle category selection
-    const handleCategorySelect = (category) => {
-        setValue("category", category);
-    };
 
     return (
         <div>
