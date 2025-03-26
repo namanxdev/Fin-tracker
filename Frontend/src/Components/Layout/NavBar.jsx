@@ -25,7 +25,6 @@ function NavBar() {
         { name: 'Expenses', path: '/expenses' },
         { name: 'Income', path: '/income' },
         { name: 'Budget', path: '/budget' },
-        { name: 'Reports', path: '/reports' }
     ];
 
     return (

@@ -10,7 +10,8 @@ import {
     SortDesc, 
     Calendar,
     AlignJustify,
-    X 
+    X,
+    Repeat // Add this import for the recurring icon
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
@@ -29,7 +30,8 @@ function ExpenseTransaction({ refreshTrigger, onExpenseUpdated }) {
         amount: '',
         category: '',
         date: '',
-        description: ''
+        description: '',
+        isRecurring: false // Add this field
     });
     
     // Categories for dropdown
@@ -77,7 +79,8 @@ function ExpenseTransaction({ refreshTrigger, onExpenseUpdated }) {
                 amount: expense.amount || 0,
                 category: expense.category || 'Other',
                 date: formattedDate,
-                description: expense.description || ''
+                description: expense.description || '',
+                isRecurring: expense.isRecurring || false // Include isRecurring
             });
             
             // Open the modal
@@ -115,7 +118,8 @@ function ExpenseTransaction({ refreshTrigger, onExpenseUpdated }) {
                 amount: '',
                 category: '',
                 date: '',
-                description: ''
+                description: '',
+                isRecurring: false // Reset isRecurring
             });
             
             // Force refresh expenses
@@ -298,7 +302,18 @@ function ExpenseTransaction({ refreshTrigger, onExpenseUpdated }) {
                                         `}
                                     >
                                         <td>{index + 1}</td>
-                                        <td>{expense.title}</td>
+                                        <td>
+                                            {/* Add recurring indicator similar to IncomeTransaction */}
+                                            <div className="flex flex-col">
+                                                <span>{expense.title}</span>
+                                                {expense.isRecurring && (
+                                                    <span className={`text-xs ${isDark ? 'text-blue-300' : 'text-blue-600'}`}>
+                                                        <Repeat size={12} className="inline mr-1" />
+                                                        Recurring
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </td>
                                         <td className="font-medium">
                                             ${parseFloat(expense.amount).toLocaleString('en-US', {
                                                 minimumFractionDigits: 2,
@@ -399,21 +414,6 @@ function ExpenseTransaction({ refreshTrigger, onExpenseUpdated }) {
                         
                         <div className="form-control mb-3">
                             <label className="label">
-                                <span className={`label-text ${isDark ? 'text-gray-300' : ''}`}>Date</span>
-                            </label>
-                            <input 
-                                type="date" 
-                                name="date"
-                                value={editFormData.date}
-                                onChange={handleEditFormChange}
-                                className={`input input-bordered w-full ${isDark ? 'bg-gray-700 text-white' : ''}`} 
-                                required
-                            />
-                        </div>
-                        
-                        <div className="form-control mb-5">
-                            <label className="label">
-                                <span className={`label-text ${isDark ? 'text-gray-300' : ''}`}>Description (Optional)</span>
                             </label>
                             <textarea 
                                 name="description"
@@ -422,6 +422,26 @@ function ExpenseTransaction({ refreshTrigger, onExpenseUpdated }) {
                                 className={`textarea textarea-bordered w-full ${isDark ? 'bg-gray-700 text-white' : ''}`} 
                                 rows="3"
                             ></textarea>
+                        </div>
+                        
+                        {/* Add isRecurring checkbox */}
+                        <div className="form-control mb-3">
+                            <label className="label cursor-pointer justify-start gap-2">
+                                <input 
+                                    type="checkbox" 
+                                    name="isRecurring"
+                                    checked={editFormData.isRecurring}
+                                    onChange={(e) => setEditFormData({
+                                        ...editFormData,
+                                        isRecurring: e.target.checked
+                                    })}
+                                    className="checkbox checkbox-primary" 
+                                />
+                                <span className={`label-text ${isDark ? 'text-gray-300' : ''}`}>
+                                    <Repeat size={16} className="inline mr-1" />
+                                    Recurring Expense
+                                </span>
+                            </label>
                         </div>
                         
                         <div className="modal-action">

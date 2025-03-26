@@ -4,6 +4,7 @@ import ExpensesPage from './pages/ExpensesPage';
 import IncomePage from './pages/IncomePage';
 import HomePage from './pages/HomePage';
 import BudgetPage from './pages/BudgetPage';
+import DashboardPage from './pages/Dashboard/DashboardPage';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Header from './Components/Layout/Header';
 import useAuthStore from './store/authStore';
@@ -44,6 +45,11 @@ const AppLayout = () => {
               <Route path="/register" element={<RegisterPage />} />
               
               {/* Protected Routes */}
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              } />
               <Route path="/expenses" element={
                 <ProtectedRoute>
                   <ExpensesPage />

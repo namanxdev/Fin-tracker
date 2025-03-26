@@ -4,8 +4,9 @@ import useExpenseStore from '../../store/expenseStore'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'react-hot-toast'
+import { RepeatIcon } from 'lucide-react' // Add this import for an icon
 
-// Update your schema
+// Update schema to include isRecurring
 const schema = z.object({
     title: z.string().min(1, { message: "Title is required" }),
     amount: z.string()
@@ -17,6 +18,7 @@ const schema = z.object({
         .refine((val) => val > 0, { message: "Amount must be positive" }),
     date: z.string().optional(),
     category: z.string().optional(),
+    isRecurring: z.boolean().optional().default(false)
 })
 
 function ExpensesForm({ onExpenseAdded }) {
@@ -30,7 +32,8 @@ function ExpensesForm({ onExpenseAdded }) {
     const { register, handleSubmit, reset, formState: { errors }, setValue, watch } = useForm({
         defaultValues: {
             date: new Date().toISOString().split('T')[0],
-            category: ''
+            category: '',
+            isRecurring: false // Add default value for isRecurring
         },
         resolver: zodResolver(schema),
     });
@@ -42,10 +45,11 @@ function ExpensesForm({ onExpenseAdded }) {
         try {
             // Ensure all required fields are present
             const expenseData = {
-                title: data.title, // Explicitly include title
+                title: data.title,
                 amount: parseFloat(data.amount),
                 date: data.date,
-                category: data.category || 'Other' // Provide a default category if empty
+                category: data.category || 'Other',
+                isRecurring: data.isRecurring // Include isRecurring field in submission
             };
             
             console.log("Expense data to submit:", expenseData);
@@ -91,24 +95,37 @@ function ExpensesForm({ onExpenseAdded }) {
                     className="border p-2 rounded-md border-red-500"
                 />
 
-                {/* Hidden input to store the actual category value */}
-                <input type="hidden" {...register("category")} />
-                
-                {/* Category Dropdown */}
-                <div className="form-control w-full">
-                    <select 
-                        className="select select-error w-full"
-                        {...register("category")}
-                        defaultValue=""
-                    >
-                        <option disabled value="">Select Category</option>
-                        {categories.map((cat, index) => (
-                        <option key={index} value={cat}>
-                            {cat}
-                        </option>
-                        ))}
-                    </select>
-                    {errors.category && <div className="text-red-500">{errors.category.message}</div>}
+                <div className='flex flex-row justify-between items-center'>
+                    {/* Category Dropdown */}
+                    <div className="form-control flex-grow mr-4">
+                        <select 
+                            className="select select-error w-full"
+                            {...register("category")}
+                            defaultValue=""
+                        >
+                            <option disabled value="">Select Category</option>
+                            {categories.map((cat, index) => (
+                            <option key={index} value={cat}>
+                                {cat}
+                            </option>
+                            ))}
+                        </select>
+                        {errors.category && <div className="text-red-500">{errors.category.message}</div>}
+                    </div>
+                    
+                    {/* Recurring expense checkbox - properly registered */}
+                    <div className="flex items-center space-x-2">
+                        <input 
+                            type="checkbox" 
+                            id="isRecurring"
+                            {...register("isRecurring")} 
+                            className="checkbox checkbox-success" 
+                        />
+                        <label htmlFor="isRecurring" className="text-sm cursor-pointer flex items-center">
+                            <RepeatIcon className="h-4 w-4 mr-1" />
+                            Recurring
+                        </label>
+                    </div>
                 </div>
 
                 <button 
