@@ -18,7 +18,10 @@ function UpcomingBills() {
   return (
     <div>
       {isLoading ? (
-        <div>Loading...</div>
+        <div className='flex justify-center items-center h-50'>
+          <span className="loading loading-infinity loading-xl"></span>
+
+        </div>
       ) : 1 > 0 ? (
         <div>
           <ul className="space-y-4 mt-4">

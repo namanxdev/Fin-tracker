@@ -167,3 +167,73 @@ export const updateUserProfile = async (req, res, next) => {
         next(error);
     }
 };
+// @desc    Verify user password
+// @access  Private
+
+
+export const verifyPassword = async (req, res) => {
+        try {
+        const { password } = req.body;
+        
+        // Since auth middleware excludes password, we need to query it again
+        const user = await User.findById(req.user._id).select('+password');
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+        
+        // Compare password using bcrypt
+        const isMatch = await bcrypt.compare(password, user.password);
+        
+        if (isMatch) {
+            return res.status(200).json({ success: true });
+        } else {
+            return res.status(400).json({ success: false, message: 'Invalid password' });
+        }
+        } catch (error) {
+        console.error('Error verifying password:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+        }
+};
+
+// @desc    Change user password
+// @access  Private
+export const changePassword = async (req, res, next) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        
+        if (!currentPassword || !newPassword) {
+            throw new ExpressError('Please provide both current and new password', 400);
+        }
+        
+        // Find user with password field included
+        const user = await User.findById(req.user._id).select('+password');
+        if (!user) {
+            throw new ExpressError('User not found', 404);
+        }
+        
+        // Verify current password
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            throw new ExpressError('Current password is incorrect', 401);
+        }
+        
+        // Ensure new password is different
+        const isSamePassword = await bcrypt.compare(newPassword, user.password);
+        if (isSamePassword) {
+            throw new ExpressError('New password cannot be the same as your current password', 400);
+        }
+        
+        // Hash and save new password
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+        await user.save();
+        
+        res.status(200).json({ 
+            success: true,
+            message: 'Password updated successfully' 
+        });
+    } catch (error) {
+        console.error('Error changing password:', error);
+        next(error);
+    }
+};

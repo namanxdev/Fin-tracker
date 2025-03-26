@@ -5,7 +5,9 @@ import {
     loginUser,
     logoutUser,
     getUserProfile,
-    updateUserProfile
+    updateUserProfile,
+    verifyPassword,
+    changePassword
 } from '../Controllers/userController.js';
 
 const router = express.Router();
@@ -38,5 +40,15 @@ router.get('/profile', auth, getUserProfile);
 // @desc    Update user profile
 // @access  Private
 router.put('/profile', auth, updateUserProfile);
+
+// @route   POST /api/User/verify-password
+// @desc    Verify user password
+// @access  Private
+router.post('/verify-password', auth, verifyPassword);
+
+// @route   PUT /api/User/change-password   
+// @desc    Change user password
+// @access  Private
+router.put('/change-password', auth, changePassword);
 
 export default router;

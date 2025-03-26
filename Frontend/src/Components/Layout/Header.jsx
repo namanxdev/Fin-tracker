@@ -23,6 +23,7 @@ function Header() {
                 <div className="flex flex-row justify-between items-center h-full px-4 max-w-7xl mx-auto">
                     <div className="flex flex-row items-center ml-2">
                         <Landmark className={`h-10 w-12 ${isDark ? "text-emerald-400" : "text-emerald-600"}`} />
+                        
                         <h1 className={`text-2xl font-bold ml-2 ${isDark?'text-white':'text-black'}`}>Fin
                             <span className={`${isDark ? "text-emerald-300" : "text-emerald-600"}`}>Track</span>
                         </h1>

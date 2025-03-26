@@ -19,19 +19,22 @@ const BudgetPerformance = ({ data, loading = false }) => {
         return {
           bg: isDarkMode ? 'bg-yellow-600/90' : 'bg-yellow-500',
           text: isDarkMode ? 'text-yellow-400' : 'text-yellow-600',
-          light: isDarkMode ? 'bg-yellow-900/30' : 'bg-yellow-50'
+          light: isDarkMode ? 'bg-yellow-900/30' : 'bg-yellow-50',
+          border: isDarkMode ? 'border-yellow-900/50' : 'border-yellow-200'
         };
       case 'Caution':
         return {
           bg: isDarkMode ? 'bg-orange-500/90' : 'bg-orange-400',
           text: isDarkMode ? 'text-orange-400' : 'text-orange-600',
-          light: isDarkMode ? 'bg-orange-900/30' : 'bg-orange-50'
+          light: isDarkMode ? 'bg-orange-900/30' : 'bg-orange-50',
+          border: isDarkMode ? 'border-orange-900/50' : 'border-orange-200'
         };
       case 'Good':
         return {
           bg: isDarkMode ? 'bg-green-600/90' : 'bg-green-500',
           text: isDarkMode ? 'text-green-400' : 'text-green-600',
-          light: isDarkMode ? 'bg-green-900/30' : 'bg-green-50'
+          light: isDarkMode ? 'bg-green-900/30' : 'bg-green-50',
+          border: isDarkMode ? 'border-green-900/50' : 'border-green-200'
         };
       default:
         return {

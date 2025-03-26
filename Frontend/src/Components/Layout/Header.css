@@ -1,0 +1,68 @@
+.header-container {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .header-glow-1 {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, rgba(16, 185, 129, 0) 70%);
+    filter: blur(25px);
+    opacity: 0.4;
+    left: -50px;
+    top: -50px;
+    z-index: 1;
+    animation: float-header 12s ease-in-out infinite;
+  }
+  
+  .header-glow-2 {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(5, 150, 105, 0.25) 0%, rgba(5, 150, 105, 0) 70%);
+    filter: blur(20px);
+    opacity: 0.5;
+    right: -30px;
+    bottom: -40px;
+    z-index: 1;
+    animation: float-header 15s ease-in-out infinite reverse;
+  }
+  
+  @keyframes float-header {
+    0% {
+      transform: translate(0px, 0px);
+    }
+    50% {
+      transform: translate(20px, -15px);
+    }
+    100% {
+      transform: translate(0px, 0px);
+    }
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 640px) {
+    .header-glow-1 {
+      width: 100px;
+      height: 100px;
+      filter: blur(20px);
+      opacity: 0.3;
+    }
+    
+    .header-glow-2 {
+      width: 80px;
+      height: 80px;
+      filter: blur(15px);
+      opacity: 0.4;
+    }
+  }
+  
+  /* For very small screens */
+  @media (max-width: 360px) {
+    .header-glow-1, .header-glow-2 {
+      display: none; /* Hide glows on very small screens to save performance */
+    }
+  }
