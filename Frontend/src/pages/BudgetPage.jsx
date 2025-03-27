@@ -72,7 +72,7 @@ function BudgetPage() {
             />
 
             {/* Main Content Area */}
-            <div className='container'>
+            <div className='container mx-auto'>
             {/* Period & Refresh Controls */}
             <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center">

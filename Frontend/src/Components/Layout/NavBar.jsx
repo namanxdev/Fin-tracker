@@ -2,21 +2,30 @@ import React, { useState, useEffect } from 'react';
 import useThemeStore from '../../store/themeStore';
 import { Link, useLocation } from 'react-router-dom';
 import './NavBar.css';
-import { Menu, X } from 'lucide-react'; // Add these imports
+import { Menu, X } from 'lucide-react';
 
 function NavBar() {
     const location = useLocation();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [activeItem, setActiveItem] = useState('DashBoard');
+    const [activeItem, setActiveItem] = useState(null);
     const isDark = useThemeStore((state) => state.isDark());
 
     // Update active item based on current route
     useEffect(() => {
         const path = location.pathname;
-        const route = path.substring(1) || 'dashboard';
+        
+        // If on homepage, set no active item
+        if (path === '/') {
+            setActiveItem(null);
+            return;
+        }
+        
+        // Otherwise, find the matching nav item
+        const route = path.substring(1);
         const item = navItems.find(item => 
             item.path.substring(1).toLowerCase() === route.toLowerCase()
         );
+        
         if (item) setActiveItem(item.name);
     }, [location]);
 

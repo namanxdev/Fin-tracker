@@ -77,7 +77,7 @@ function IncomePage() {
             </div>
 
             {/* Main Content Area */}
-            <div className='container'>
+            <div className='container mx-auto'>
                 {activeView === 'graphs' ? (
                     <div className='space-y-8'>
                         {/* Income Cards */}

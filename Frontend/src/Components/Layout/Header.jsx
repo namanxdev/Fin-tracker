@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'; // Add this import
 import NavBar from './NavBar';
 import { Landmark } from 'lucide-react';
 import ThemeToggle from '../Theme/ThemeToggle';
@@ -21,13 +22,17 @@ function Header() {
                         : "bg-white/30 text-black"}`}
             >
                 <div className="flex flex-row justify-between items-center h-full px-4 max-w-7xl mx-auto">
-                    <div className="flex flex-row items-center ml-2">
+                    {/* Logo and brand as a link to homepage */}
+                    <Link 
+                      to="/" 
+                      className="flex flex-row items-center ml-2 transition-transform hover:scale-105"
+                    >
                         <Landmark className={`h-10 w-12 ${isDark ? "text-emerald-400" : "text-emerald-600"}`} />
                         
                         <h1 className={`text-2xl font-bold ml-2 ${isDark?'text-white':'text-black'}`}>Fin
                             <span className={`${isDark ? "text-emerald-300" : "text-emerald-600"}`}>Track</span>
                         </h1>
-                    </div>
+                    </Link>
                     <NavBar />
                     <div className='flex flex-row items-center mr-2 space-x-2'>
                         {/* Toggle Themes */}

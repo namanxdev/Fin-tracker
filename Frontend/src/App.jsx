@@ -13,6 +13,7 @@ import useThemeStore from './store/themeStore';
 import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import Settings from './pages/Settings';
+
 // TODO: make all pages responsive add payment methods and add a settings page
 const ProtectedRoute = ({children}) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -29,25 +30,29 @@ const AppLayout = () => {
   const location = useLocation();
   const isDark = useThemeStore((state) => state.isDark());
   const isHomePage = location.pathname === '/';
-  
+
   return (
-    <>
-      
+    <div className="relative min-h-screen">
+      {/* Background for dark and light modes - only shown on non-homepage routes */}
+      {!isHomePage && (
+        <>
+          {isDark ? (
+            <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
+          ) : (
+            <div className="absolute inset-0 -z-10 h-full w-full bg-white [background:radial-gradient(125%_125%_at_50%_10%,#fff_40%,#63e_100%)]"></div>
+          )}
+        </>
+      )}
+
       <Header />
-      {isHomePage ? (
-        // For homepage, use full width without extra containers
-        <main className="min-h-screen">
+      <main className="min-h-screen">
+        {isHomePage ? (
           <HomePage />
-        </main>
-      ) : (
-        // For other pages, use the styled container
-        <main className={`min-h-screen ${isDark ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"}`}>
+        ) : (
           <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
-              
-              {/* Protected Routes */}
               <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <DashboardPage />
@@ -58,39 +63,34 @@ const AppLayout = () => {
                   <ExpensesPage />
                 </ProtectedRoute>
               } />
-              
               <Route path="/income" element={
                 <ProtectedRoute>
                   <IncomePage />
                 </ProtectedRoute>
               } />
-              
               <Route path="/budget" element={
                 <ProtectedRoute>
-                    <BudgetPage />
+                  <BudgetPage />
                 </ProtectedRoute>
               } />
-
               <Route path="/settings" element={
                 <ProtectedRoute>
                   <Settings />
                 </ProtectedRoute>
               } />
-
               <Route path="/profile" element={
                 <ProtectedRoute>
                   <ProfilePage />
                 </ProtectedRoute>
               } />
-
-              {/* Add other protected routes here */}
             </Routes>
           </div>
-        </main>
-      )}
-    </>
+        )}
+      </main>
+    </div>
   );
-}
+};
+
 
 function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
