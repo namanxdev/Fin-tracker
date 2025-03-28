@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   PieChart,
   Pie,
@@ -9,6 +10,8 @@ import {
 } from 'recharts';
 import DashboardCard from './DashboardCard';
 import useThemeStore from '../../store/themeStore';
+import useDashboardStore from '../../store/dashboardStore';
+import { PlusCircle } from 'lucide-react';
 
 // More vibrant color palette for the chart with dark mode variants
 const CHART_COLORS = {
@@ -38,6 +41,7 @@ const CHART_COLORS = {
 
 const TopCategoriesChart = ({ data, loading = false }) => {
   const isDarkMode = useThemeStore(state => state.isDark());
+  const isNewUser = useDashboardStore(state => state.isNewUser);
   
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
@@ -66,7 +70,24 @@ const TopCategoriesChart = ({ data, loading = false }) => {
         <div className="h-64 flex items-center justify-center">
           <div className="text-center">
             <div className="text-5xl mb-2">🍕</div>
-            <p className="text-gray-500 dark:text-gray-400">No category data available</p>
+            {isNewUser ? (
+              <>
+                <h3 className={`text-lg font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-2`}>
+                  Track where your money goes
+                </h3>
+                <p className={`text-sm max-w-xs mx-auto mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                  Add expenses with categories to see your spending patterns
+                </p>
+                <Link to="/expenses" className={`inline-flex items-center px-4 py-2 rounded-md text-white 
+                  ${isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'} transition-colors`}>
+                  <PlusCircle className="h-4 w-4 mr-2" /> Add Categorized Expense
+                </Link>
+              </>
+            ) : (
+              <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                No category data available
+              </p>
+            )}
           </div>
         </div>
       </DashboardCard>

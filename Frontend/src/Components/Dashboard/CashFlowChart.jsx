@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   LineChart,
   Line,
@@ -11,11 +12,14 @@ import {
 } from 'recharts';
 import DashboardCard from './DashboardCard';
 import useThemeStore from '../../store/themeStore';
+import useDashboardStore from '../../store/dashboardStore';
+import { ArrowRight } from 'lucide-react';
 
 const CashFlowChart = ({ data, loading = false, months = 6, onPeriodChange }) => {
   const [animate, setAnimate] = useState(false);
   const isDarkMode = useThemeStore(state => state.isDark());
-  
+  const isNewUser = useDashboardStore(state => state.isNewUser);
+    
   useEffect(() => {
     // Add entrance animation when data loads
     if (data && data.length > 0) {
@@ -165,7 +169,28 @@ const CashFlowChart = ({ data, loading = false, months = 6, onPeriodChange }) =>
           <div className="h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
             <div className="text-center">
               <div className="text-5xl mb-2">📊</div>
-              <p>No cash flow data available</p>
+              {isNewUser ? (
+                <>
+                  <h3 className={`text-lg font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-2`}>
+                    Welcome to Cash Flow Tracking
+                  </h3>
+                  <p className={`max-w-xs mx-auto text-sm mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Start by adding your income and expenses to see your financial flow over time
+                  </p>
+                  <div className="flex justify-center gap-3">
+                    <Link to="/income/add" className={`flex items-center px-4 py-2 rounded-md text-white 
+                      ${isDarkMode ? 'bg-green-600 hover:bg-green-700' : 'bg-green-500 hover:bg-green-600'} transition-colors`}>
+                      Add Income <ArrowRight className="h-4 w-4 ml-2" />
+                    </Link>
+                    <Link to="/expenses/add" className={`flex items-center px-4 py-2 rounded-md text-white 
+                      ${isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'} transition-colors`}>
+                      Add Expense <ArrowRight className="h-4 w-4 ml-2" />
+                    </Link>
+                  </div>
+                </>
+              ) : (
+                <p>No cash flow data available for this period</p>
+              )}
             </div>
           </div>
         )}

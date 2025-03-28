@@ -18,6 +18,7 @@ const schema = z.object({
         .refine((val) => val > 0, { message: "Amount must be positive" }),
     date: z.string().optional(),
     category: z.string().optional(),
+    paymentMethod: z.string().optional().default('Cash'),
     isRecurring: z.boolean().optional().default(false)
 })
 
@@ -29,11 +30,17 @@ function ExpensesForm({ onExpenseAdded }) {
         'Shopping', 'Travel',  'Other'
     ];
 
+    // Add this array of payment methods near your categories array
+    const paymentMethods = [
+        'Cash', 'Credit Card', 'Debit Card', 'Bank Transfer', 'Other'
+    ];
+
     const { register, handleSubmit, reset, formState: { errors }, setValue, watch } = useForm({
         defaultValues: {
             date: new Date().toISOString().split('T')[0],
             category: '',
-            isRecurring: false // Add default value for isRecurring
+            isRecurring: false, // Add default value for isRecurring
+            paymentMethod: 'Cash' // Default payment method
         },
         resolver: zodResolver(schema),
     });
@@ -49,7 +56,8 @@ function ExpensesForm({ onExpenseAdded }) {
                 amount: parseFloat(data.amount),
                 date: data.date,
                 category: data.category || 'Other',
-                isRecurring: data.isRecurring // Include isRecurring field in submission
+                isRecurring: data.isRecurring,
+                paymentMethod: data.paymentMethod || 'Cash' // Add payment method to submission
             };
             
             console.log("Expense data to submit:", expenseData);
@@ -74,7 +82,7 @@ function ExpensesForm({ onExpenseAdded }) {
                     {...register("title", { required: true })}
                     type="text"
                     placeholder="Title"
-                    className="border p-2 rounded-md border-red-500"
+                    className="border p-2 rounded-md "
                 />
                 {errors.title && <div className="text-red-500">{errors.title.message}</div>}
 
@@ -84,7 +92,7 @@ function ExpensesForm({ onExpenseAdded }) {
                     step="0.01"
                     min="0"
                     placeholder="Amount"
-                    className="border p-2 rounded-md border-red-500"
+                    className="border p-2 rounded-md "
                 />
                 {errors.amount && <div className="text-red-500">{errors.amount.message}</div>}
 
@@ -92,7 +100,7 @@ function ExpensesForm({ onExpenseAdded }) {
                     {...register("date")}
                     type="date"
                     placeholder="Date"
-                    className="border p-2 rounded-md border-red-500"
+                    className="border p-2 rounded-md "
                 />
 
                 <div className='flex flex-row justify-between items-center'>
@@ -128,9 +136,26 @@ function ExpensesForm({ onExpenseAdded }) {
                     </div>
                 </div>
 
+                {/* Add Payment Method Dropdown */}
+                <div className="form-control w-full">
+                    <select 
+                        className="select select-bordered w-full"
+                        {...register("paymentMethod")}
+                        defaultValue="Cash"
+                    >
+                        <option disabled value="">Select Payment Method</option>
+                        {paymentMethods.map((method, index) => (
+                            <option key={index} value={method}>
+                                {method}
+                            </option>
+                        ))}
+                    </select>
+                    {errors.paymentMethod && <div className="text-red-500">{errors.paymentMethod.message}</div>}
+                </div>
+
                 <button 
                     type="submit" 
-                    className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-md mt-2 transition-all"
+                    className="bg-red-500 hover:bg-red-700 text-white p-2 rounded-md mt-2 transition-all"
                 >
                     Add Expense
                 </button>

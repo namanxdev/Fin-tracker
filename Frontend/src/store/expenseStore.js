@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Create axios instance with credentials support
 const api = axios.create({
-    baseURL: 'http://localhost:3000/api/expenses',
+    baseURL: import.meta.env.VITE_BASE_URL+'/expenses',
     withCredentials: true, // Important for cookies to be sent
 });
 
@@ -20,6 +20,7 @@ const useExpenseStore = create((set, get) => ({
     currentExpense: null,
     isLoading: false,
     error: null,
+    isNewUser: true,
     
     // UI state (safe to store in localStorage)
     uiState: {
@@ -69,10 +70,45 @@ const useExpenseStore = create((set, get) => ({
         set({ isLoading: true, error: null });
         try {
             const response = await api.get('/');
-            set({ expenses: response.data, isLoading: false });
-            return response.data;
+            // Ensure we always have an array
+            const expenses = Array.isArray(response.data) ? response.data : [];
+            
+            // Update isNewUser based on whether user has any expenses
+            const isNewUser = expenses.length === 0;
+            
+            set({ 
+                expenses,
+                isLoading: false,
+                isNewUser // Update new user status
+            });
+            return expenses;
         } catch (error) {
+            // If API returns 404 or no data found, assume it's a new user
+            if (error.response?.status === 404 || 
+                error.response?.data?.message?.includes('no data')) {
+                set({ expenses: [], isLoading: false, isNewUser: true });
+                return [];
+            }
             return handleApiError(error, 'Failed to fetch expenses', set);
+        }
+    },
+
+    // Check if user is new
+    checkNewUserStatus: async () => {
+        // If we already have expenses loaded, check based on that
+        if (get().expenses.length > 0) {
+            set({ isNewUser: false });
+            return false;
+        }
+        
+        // Otherwise try to fetch expenses to determine status
+        try {
+            const expenses = await get().getExpenses();
+            return expenses.length === 0;
+        } catch (error) {
+            console.error('Error checking new user status:', error);
+            // Assume they're new if we can't determine status
+            return true;
         }
     },
 
@@ -82,7 +118,8 @@ const useExpenseStore = create((set, get) => ({
             const response = await api.post('/', expenseData);
             set((state) => ({
                 expenses: [...state.expenses, response.data],
-                isLoading: false
+                isLoading: false,
+                isNewUser: false // User has created an expense, so no longer new
             }));
             
             // Update last used category in UI state

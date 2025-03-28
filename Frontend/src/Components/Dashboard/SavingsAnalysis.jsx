@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   BarChart,
   Bar,
@@ -13,10 +14,11 @@ import {
 import DashboardCard from './DashboardCard';
 import useThemeStore from '../../store/themeStore';
 import useDashboardStore from '../../store/dashboardStore';
+import { TrendingUp } from 'lucide-react';
 
 const SavingsAnalysis = ({ data, loading = false }) => {
   const isDarkMode = useThemeStore(state => state.isDark());
-  const getSavingsAnalysis = useDashboardStore(state => state.getSavingsAnalysis);
+  const isNewUser = useDashboardStore(state => state.isNewUser);
   
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('en-US', { 
@@ -65,7 +67,25 @@ const SavingsAnalysis = ({ data, loading = false }) => {
       className={`${isDarkMode ? 'shadow-xl shadow-blue-900/10' : 'shadow-md'}`}
     >
       <div className="h-110">
-        {data?.savingsData && data.savingsData.length > 0 ? (
+        {isNewUser ? (
+          <div className="h-full flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-5xl mb-2">💰</div>
+              <h3 className={`text-lg font-medium ${isDarkMode ? 'text-gray-200' : 'text-gray-800'} mb-2`}>
+                Start tracking your savings
+              </h3>
+              <p className={`text-sm max-w-xs mx-auto mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                Add your income and expenses to automatically calculate savings and see your progress over time
+              </p>
+              <div className="flex justify-center gap-3">
+                <Link to="/budget" className={`flex items-center px-4 py-2 rounded-md text-white 
+                  ${isDarkMode ? 'bg-green-600 hover:bg-green-700' : 'bg-green-500 hover:bg-green-600'} transition-colors`}>
+                  Start Savings Goal <TrendingUp className="h-4 w-4 ml-2" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        ) : data?.savingsData && data.savingsData.length > 0 ? (
           <>
             <ResponsiveContainer width="100%" height="60%">
               <BarChart
@@ -142,7 +162,7 @@ const SavingsAnalysis = ({ data, loading = false }) => {
             </div>
           </>
         ) : (
-          <div className="h-full flex  items-center justify-center">
+          <div className="h-full flex items-center justify-center">
             <div className="text-center">
               <div className="text-5xl mb-2">💰</div>
               <p className="text-gray-500 dark:text-gray-400">No savings data available</p>

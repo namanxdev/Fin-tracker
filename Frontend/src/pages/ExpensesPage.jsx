@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import ExpensesForm from '../Components/Expenses/ExpensesForm';
 import ExpenseAreaChart from '../Components/Expenses/AreaChart';
 import ExpensesPieChart from '../Components/Expenses/ExpensesPieChart';
@@ -9,16 +9,30 @@ import SpecificMonthChart from '../Components/Expenses/SpecificMonthChart';
 import DateRangeChart from '../Components/Expenses/DateRangeChart';
 import useThemeStore from '../store/themeStore';
 import ExpenseCards from '../Components/Expenses/ExpenseCards';
+import useExpenseStore from '../store/expenseStore';
+import { PlusCircle, LineChart, Tag, Info, Receipt } from 'lucide-react';
 
 function ExpensesPage() {
     const isDark = useThemeStore((state) => state.isDark());
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [activeView, setActiveView] = useState('graphs');
-    const [chartType, setChartType] = useState('total'); // 'total', 'monthly', 'yearly', 'specific-month', 'date-range'
+    const [chartType, setChartType] = useState('total');
+    
+    // Get isNewUser and related functions from store
+    const isNewUser = useExpenseStore((state) => state.isNewUser);
+    const getExpenses = useExpenseStore((state) => state.getExpenses);
+    
+    // Check if user is new when component mounts
+    useEffect(() => {
+        // This will set isNewUser to false if there are any expenses
+        getExpenses();
+    }, [getExpenses]);
 
     const handleExpenseAdded = useCallback(() => {
         setRefreshTrigger(prev => prev + 1);
-    }, []);
+        // After an expense is added, refresh data which will update isNewUser status
+        getExpenses();
+    }, [getExpenses]);
     
     // Render the appropriate chart based on selection
     const renderChart = () => {
@@ -37,6 +51,74 @@ function ExpensesPage() {
         }
     };
     
+    // New User View - Guide and form
+    if (isNewUser) {
+        return (
+            <div className="space-y-6 container mx-auto px-4">
+                <div className={`p-8 rounded-lg shadow-md ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+                    <div className="text-center mb-8">
+                        <div className="w-16 h-16 mx-auto bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+                            <Receipt size={28} className="text-emerald-500" />
+                        </div>
+                        <h1 className={`text-2xl font-bold mb-2 ${isDark ? 'text-gray-100' : 'text-gray-800'}`}>
+                            Welcome to Expense Tracking
+                        </h1>
+                        <p className={`max-w-lg mx-auto ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                            Keep track of your spending habits and identify areas where you can save money.
+                        </p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div className={`p-6 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-emerald-50'} text-center`}>
+                            <div className="flex justify-center mb-4">
+                                <PlusCircle size={24} className={isDark ? 'text-emerald-400' : 'text-emerald-500'} />
+                            </div>
+                            <h3 className="font-semibold mb-2">Record Expenses</h3>
+                            <p className="text-sm mb-2">Log all your expenses to build a complete financial picture</p>
+                        </div>
+                        
+                        <div className={`p-6 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-emerald-50'} text-center`}>
+                            <div className="flex justify-center mb-4">
+                                <LineChart size={24} className={isDark ? 'text-emerald-400' : 'text-emerald-500'} />
+                            </div>
+                            <h3 className="font-semibold mb-2">Visualize Spending</h3>
+                            <p className="text-sm mb-2">See where your money goes with charts and graphs</p>
+                        </div>
+                        
+                        <div className={`p-6 rounded-lg ${isDark ? 'bg-gray-700' : 'bg-emerald-50'} text-center`}>
+                            <div className="flex justify-center mb-4">
+                                <Tag size={24} className={isDark ? 'text-emerald-400' : 'text-emerald-500'} />
+                            </div>
+                            <h3 className="font-semibold mb-2">Categorize Spending</h3>
+                            <p className="text-sm mb-2">Group expenses by categories to identify spending patterns</p>
+                        </div>
+                    </div>
+                    
+                    <div className={`p-6 rounded-lg border ${isDark ? 'border-gray-700 bg-gray-700/50' : 'border-emerald-200 bg-emerald-50'} mb-8`}>
+                        <div className="flex items-start">
+                            <Info size={20} className={`mt-1 mr-3 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`} />
+                            <div>
+                                <h3 className={`font-medium mb-2 ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Getting Started</h3>
+                                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                                    Add your first expense below. Once you start tracking expenses, you'll see charts and summaries to help you understand your spending habits.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Form Section - More prominent for new users */}
+                    <div className={`p-6 rounded-lg border-2 ${isDark ? 'border-emerald-600/30 bg-gray-700/50' : 'border-emerald-500/30 bg-white'}`}>
+                        <h2 className={`text-xl font-semibold mb-4 ${isDark ? 'text-white' : 'text-gray-800'}`}>
+                            Add Your First Expense
+                        </h2>
+                        <ExpensesForm onExpenseAdded={handleExpenseAdded} />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    
+    // Regular View (existing user) - Keep your current code
     return (
         <div className="space-y-6">
             {/* View Selection Bar */}

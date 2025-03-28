@@ -3,8 +3,10 @@ import {
   CreditCard, 
   Banknote, 
   BarChart3,
-  TrendingUp
+  TrendingUp,
+  ArrowRight
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import useDashboardStore from '../../store/dashboardStore';
 import useThemeStore from '../../store/themeStore';
 import SummaryCard from '../../components/Dashboard/SummaryCard';
@@ -24,6 +26,7 @@ function DashboardPage() {
     savingsData,
     budgetPerformance,
     isLoading,
+    isNewUser,
     getDashboardSummary,
     getCashFlow,
     getSavingsAnalysis,
@@ -71,6 +74,31 @@ function DashboardPage() {
           </p>
         </div>
       </div>
+
+      {isNewUser && !isLoading && (
+        <div className={`mb-8 p-6 rounded-lg ${isDarkMode ? 'bg-blue-900/20 border border-blue-800/30' : 'bg-blue-50 border border-blue-100'}`}>
+          <h2 className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-blue-300' : 'text-blue-700'}`}>
+            Welcome to Your Financial Dashboard! 🚀
+          </h2>
+          <p className={`mb-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+            Let's get started by setting up your financial profile. Add income, expenses, and budgets to see your complete financial picture.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Link to="/income" className={`flex items-center px-4 py-2 rounded-md text-white 
+              ${isDarkMode ? 'bg-green-600 hover:bg-green-700' : 'bg-green-500 hover:bg-green-600'} transition-colors`}>
+              Add Income <ArrowRight className="h-4 w-4 ml-2" />
+            </Link>
+            <Link to="/expenses" className={`flex items-center px-4 py-2 rounded-md text-white 
+              ${isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'} transition-colors`}>
+              Add Expense <ArrowRight className="h-4 w-4 ml-2" />
+            </Link>
+            <Link to="/budget" className={`flex items-center px-4 py-2 rounded-md text-white 
+              ${isDarkMode ? 'bg-purple-600 hover:bg-purple-700' : 'bg-purple-500 hover:bg-purple-600'} transition-colors`}>
+              Create Budget <ArrowRight className="h-4 w-4 ml-2" />
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Summary Cards Row - Improved spacing and responsiveness */}
       <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8  p-4 rounded-lg shadow-md`}>

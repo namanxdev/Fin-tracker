@@ -139,7 +139,7 @@ function IncomePieChart() {
     return (
         <div className={`rounded-lg p-4 shadow-md ${isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'}`}>
             <h2 className="text-xl font-semibold mb-4 text-center">Income by Category</h2>
-            <div className="w-full h-72">
+            <div className="w-full h-80">
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                         <Pie

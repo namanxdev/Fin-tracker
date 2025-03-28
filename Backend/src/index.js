@@ -24,7 +24,6 @@ const app = express();
 
 dotenv.config();
 
-// Initialize passport before routes
 app.use(passport.initialize());
 setupPassport();
 
@@ -34,7 +33,7 @@ app.get('/', (req, res) => {
 
 app.use(cors({
     // origin: process.env.FRONTEND_URL,
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     methods: ["GET", "POST", "PUT", "DELETE"],
     // allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
@@ -51,12 +50,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: process.env.NODE_ENV === 'production' ? 100 : 1000, // Limit each IP to 100 requests per windowMs
-    message:"Too many Login attempts ,please try again after 15 minutes"
-  });
-  app.use('/api/', limiter);
+// const limiter = rateLimit({
+//     windowMs: 15 * 60 * 1000,
+//     max: process.env.NODE_ENV === 'production' ? 100 : 10000, // Limit each IP to 100 requests per windowMs
+//     message:"Too many Login attempts ,please try again after 15 minutes"
+//   });
+//   app.use('/api/', limiter);
 
 // Using Routes
 

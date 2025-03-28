@@ -8,6 +8,7 @@ const useIncomeStore = create((set, get) => ({
     currentIncome: null,
     isLoading: false,
     error: null,
+    isNewUser: true,
     uiState: {
         filters: {},
         sortBy: 'date',
@@ -44,27 +45,64 @@ const useIncomeStore = create((set, get) => ({
         }
     },
 
+    // Update the getIncomes function to detect new users
     getIncomes: async () => {
         set({ isLoading: true, error: null });
         try {
             const response = await api.get('/');
             // Ensure we always have an array
             const incomes = Array.isArray(response.data) ? response.data : [];
-            set({ incomes, isLoading: false });
+            
+            // Set isNewUser flag based on whether user has any incomes
+            const isNewUser = incomes.length === 0;
+            
+            set({ 
+                incomes, 
+                isLoading: false,
+                isNewUser // Update the new user flag
+            });
+            
             return incomes;
         } catch (error) {
-            set({ incomes: [], isLoading: false });
+            // If API returns 404 or no data found, assume it's a new user
+            if (error.response?.status === 404 || 
+                error.response?.data?.message?.includes('no data')) {
+                set({ incomes: [], isLoading: false, isNewUser: true });
+            } else {
+                set({ incomes: [], isLoading: false });
+            }
             return handleApiError(error, 'Failed to fetch incomes', set);
         }
     },
 
+    // Add a new method to check if user is new
+    checkNewUserStatus: async () => {
+        // If we already have incomes loaded, check based on that
+        if (get().incomes.length > 0) {
+            set({ isNewUser: false });
+            return false;
+        }
+        
+        // Otherwise try to fetch incomes to determine status
+        try {
+            const incomes = await get().getIncomes();
+            return incomes.length === 0;
+        } catch (error) {
+            console.error('Error checking new user status:', error);
+            // Assume they're new if we can't determine status
+            return true;
+        }
+    },
+
+    // Update createIncome to automatically set isNewUser to false when an income is added
     createIncome: async (incomeData) => {
         set({ isLoading: true, error: null });
         try {
             const response = await api.post('/', incomeData);
             set(state => ({
                 incomes: [response.data, ...state.incomes],
-                isLoading: false
+                isLoading: false,
+                isNewUser: false // User has created an income, so no longer new
             }));
             return response.data;
         } catch (error) {

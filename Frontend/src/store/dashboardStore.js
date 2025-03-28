@@ -25,6 +25,7 @@ const useDashboardStore = create((set, get) => ({
     budgetPerformance: null,
     isLoading: false,
     error: null,
+    isNewUser: false,
 
     // Reset functions
     resetDashboard: () => set({
@@ -40,9 +41,26 @@ const useDashboardStore = create((set, get) => ({
         try {
             set({ isLoading: true, error: null });
             const response = await api.get('/dashboard');
-            set({ summaryData: response.data, isLoading: false });
+            
+            // Check if user has any financial data
+            const hasNoData = 
+                (!response.data.income || response.data.income === 0) && 
+                (!response.data.expenses || response.data.expenses === 0) &&
+                (!response.data.budgetCount || response.data.budgetCount === 0);
+            
+            set({ 
+                summaryData: response.data, 
+                isLoading: false,
+                isNewUser: hasNoData
+            });
             return response.data;
         } catch (error) {
+            // If API returns 404 or specific "no data" message
+            if (error.response?.status === 404 || 
+                error.response?.data?.message?.includes('no data')) {
+                set({ isNewUser: true, isLoading: false });
+                return null;
+            }
             return handleApiError(error, 'Failed to fetch dashboard summary', set);
         }
     },
