@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { User, Mail, Calendar, CreditCard, Settings as SettingsIcon, ChevronRight } from 'lucide-react';
+import { User, Mail, Calendar,Settings as SettingsIcon, ChevronRight } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 import useThemeStore from '../store/themeStore';
 import useIncomeStore from "../store/incomeStore";
@@ -57,6 +57,9 @@ function ProfilePage() {
   // Calculate total transactions from the stored arrays
   const totalTransactions = incomes.length + expenses.length;
   
+  // Add this simple check
+  const isNewUser = totalTransactions === 0;
+  
   // Format dates from user object
   const { date: createdDate } = formatDateTime(user?.createdAt);
   const { date: updatedDate, time: updatedTime } = formatDateTime(user?.updatedAt);
@@ -64,10 +67,10 @@ function ProfilePage() {
   // Fetch data when component mounts
   useEffect(() => {
     // Only fetch if arrays are empty
-    if (incomes.length === 0 && !isLoadingIncome) {
+    if (incomes.length === 0 && !isLoadingIncome && !isNewUser) {
       getIncomes();
     }
-    if (expenses.length === 0 && !isLoadingExpense) {
+    if (expenses.length === 0 && !isLoadingExpense && !isNewUser) {
       getExpenses();
     }
   }, [incomes.length, expenses.length, isLoadingIncome, isLoadingExpense, getIncomes, getExpenses]);
@@ -164,20 +167,35 @@ function ProfilePage() {
               
               <div className="divider my-6">Activity</div>
               
-              <div className="stats stats-vertical shadow w-full">
-                <div className="stat">
-                  <div className="stat-title">Total Transactions</div>
-                  <div className="stat-value">{accountStats.totalTransactions}</div>
-                  <div className="stat-desc">Across the account</div>
+              {isNewUser ? (
+                <div className={`p-6 rounded-lg text-center ${isDark ? "bg-gray-800" : "bg-gray-100"}`}>
+                  <h3 className="text-xl font-semibold mb-3">Welcome to FinTrack!</h3>
+                  <p className="mb-4">You haven't recorded any transactions yet. Get started by adding your first income or expense.</p>
+                  <div className="flex justify-center gap-4 mt-4">
+                    <Link to="/income" className="btn btn-primary">
+                      Add Income
+                    </Link>
+                    <Link to="/expenses" className="btn btn-secondary">
+                      Add Expense
+                    </Link>
+                  </div>
                 </div>
-                
-                <div className="stat">
-                  <div className="stat-title">Last Login</div>
-                  <div className="stat-value text-lg">{accountStats.lastLoginDate}</div>
-                  <div className="stat-desc">Last Updated at {accountStats.lastLogin}</div>
-                  <div className="stat-desc">From this device</div>
+              ) : (
+                <div className="stats stats-vertical shadow w-full">
+                  <div className="stat">
+                    <div className="stat-title">Total Transactions</div>
+                    <div className="stat-value">{accountStats.totalTransactions}</div>
+                    <div className="stat-desc">Across the account</div>
+                  </div>
+                  
+                  <div className="stat">
+                    <div className="stat-title">Last Login</div>
+                    <div className="stat-value text-lg">{accountStats.lastLoginDate}</div>
+                    <div className="stat-desc">Last Updated at {accountStats.lastLogin}</div>
+                    <div className="stat-desc">From this device</div>
+                  </div>
                 </div>
-              </div>
+              )}
               
               <div className="card-actions justify-end mt-6">
                 <Link to="/settings" className="btn btn-ghost btn-sm">
@@ -185,6 +203,28 @@ function ProfilePage() {
                   <ChevronRight size={16} />
                 </Link>
               </div>
+
+              {isNewUser && (
+                <div className={`card mt-6 ${isDark ? "bg-gray-800" : "bg-base-100"} shadow-xl`}>
+                  <div className="card-body">
+                    <h2 className="card-title">
+                      <span className="badge badge-accent">New</span> 
+                      Getting Started Guide
+                    </h2>
+                    
+                    <ul className="steps steps-vertical mt-4">
+                      <li className="step step-primary">Create your account ✓</li>
+                      <li className="step">Add your first income</li>
+                      <li className="step">Record your expenses</li>
+                      <li className="step">Set up a monthly budget</li>
+                    </ul>
+                    
+                    <div className="card-actions justify-end mt-4">
+                      <Link to="/dashboard" className="btn btn-primary">Go to Dashboard</Link>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

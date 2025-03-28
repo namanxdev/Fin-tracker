@@ -28,7 +28,15 @@ const UserSchema = new Schema({
         type:String,
         default:''
     },
-
+    // Google authentication
+    googleId: {
+        type: String,
+        default: null
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    }
 
 },
 {
