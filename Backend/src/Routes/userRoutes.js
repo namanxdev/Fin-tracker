@@ -1,5 +1,5 @@
 import express from 'express';
-import auth from '../middleware/auth.js';
+import auth from '../Middleware/auth.js';
 import {
     registerUser,
     loginUser,
@@ -9,6 +9,8 @@ import {
     verifyPassword,
     changePassword
 } from '../Controllers/userController.js';
+import { validateRequest } from '../Middleware/validateMiddleware.js'; 
+import { userLoginSchema,userRegisterSchema, profileUpdateSchema } from '../Schema.js';
 
 const router = express.Router();
 
@@ -19,12 +21,12 @@ router.get('/', (req, res) => {
 // @route   POST /api/User/register
 // @desc    Register a new user
 // @access  Public
-router.post('/register', registerUser);
+router.post('/register',validateRequest(userRegisterSchema) ,registerUser);
 
 // @route   POST /api/User/login
 // @desc    Authenticate user & get token
 // @access  Public
-router.post('/login', loginUser);
+router.post('/login',validateRequest(userLoginSchema) ,loginUser);
 
 // @route   GET /api/User/logout
 // @desc    Logout user

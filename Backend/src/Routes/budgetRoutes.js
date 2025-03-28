@@ -1,5 +1,7 @@
 import express from 'express';
-import auth from '../middleware/auth.js';
+import auth from '../Middleware/auth.js';
+import { validateRequest } from '../Middleware/validateMiddleware.js'; 
+import { budgetSchema } from '../Schema.js'; 
 import {
   getBudgets,
   createBudget,
@@ -19,7 +21,7 @@ router.get('/', auth, getBudgets);
 // @route   POST /api/budgets
 // @desc    Create a new budget
 // @access  Private
-router.post('/', auth, createBudget);
+router.post('/', auth,validateRequest(budgetSchema) ,createBudget);
 
 // @route   GET /api/budgets/status/all
 // @desc    Get status of all budgets compared to actual spending
@@ -34,7 +36,7 @@ router.get('/:id', auth, getBudgetById);
 // @route   PUT /api/budgets/:id
 // @desc    Update a budget
 // @access  Private
-router.put('/:id', auth, updateBudget);
+router.put('/:id', auth, validateRequest(budgetSchema),updateBudget);
 
 // @route   DELETE /api/budgets/:id
 // @desc    Delete a budget

@@ -1,5 +1,5 @@
 import express from 'express';
-import auth from '../middleware/auth.js';
+import auth from '../Middleware/auth.js';
 import {
     getDashboardSummary,
     getCashFlow,

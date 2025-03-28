@@ -1,5 +1,7 @@
 import express from 'express';
-import auth from '../middleware/auth.js';
+import auth from '../Middleware/auth.js';
+import { validateRequest } from '../Middleware/validateMiddleware.js'; 
+import { expenseSchema } from '../Schema.js';
 import {
     getExpenses,
     createExpense,
@@ -50,7 +52,7 @@ router.get('/', auth, getExpenses);
 // @route   POST /api/expenses
 // @desc    Create a new expense
 // @access  Private
-router.post('/', auth, createExpense);
+router.post('/', auth, validateRequest(expenseSchema) ,createExpense);
 
 // @route   GET /api/expenses/:id
 // @desc    Get expense by ID
@@ -60,7 +62,7 @@ router.get('/:id', auth, getExpenseById);
 // @route   PUT /api/expenses/:id
 // @desc    Update an expense
 // @access  Private
-router.put('/:id', auth, updateExpense);
+router.put('/:id', auth, validateRequest(expenseSchema) ,updateExpense);
 
 // @route   DELETE /api/expenses/:id
 // @desc    Delete an expense

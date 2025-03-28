@@ -22,22 +22,20 @@ const errorHandler = (err, req, res, next) => {
         return res.status(400).json({ message: messages.join(', ') });
     }
     
-    // Mongoose duplicate key error
-    if (err.code && err.code === 11000) {
-        return res.status(400).json({ message: 'Duplicate field value entered.' });
-    }
-    
     // JWT errors
     if (err.name === 'JsonWebTokenError') {
-        return res.status(401).json({ message: 'Invalid token.' });
-    }
-    if (err.name === 'TokenExpiredError') {
-        return res.status(401).json({ message: 'Token expired.' });
+        return res.status(401).json({ message: 'Invalid token' });
     }
     
+    if (err.name === 'TokenExpiredError') {
+        return res.status(401).json({ message: 'Token expired' });
+    }
+
     // Default to 500 server error
     res.status(500).json({
-        message: err.message || 'Server Error'
+        message: process.env.NODE_ENV === 'production' 
+            ? 'Something went wrong'
+            : err.message 
     });
 };
 

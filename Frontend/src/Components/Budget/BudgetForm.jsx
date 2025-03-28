@@ -25,8 +25,7 @@ function BudgetForm({ onBudgetAdded }) {
         period: 'monthly',
         startDate: format(new Date(), 'yyyy-MM-dd'),
         endDate: '',
-        color: '',
-        notes: ''
+        description: ''
     });
     
     const [formErrors, setFormErrors] = useState({});
@@ -35,16 +34,8 @@ function BudgetForm({ onBudgetAdded }) {
     const handleChange = (e) => {
         const { name, value } = e.target;
         
-        // Auto-select color when category changes
-        if (name === 'category') {
-            setFormData(prev => ({ 
-                ...prev, 
-                [name]: value,
-                color: getCategoryColor(value)
-            }));
-        } else {
-            setFormData(prev => ({ ...prev, [name]: value }));
-        }
+        // Just update the field that changed - no need to add color
+        setFormData(prev => ({ ...prev, [name]: value }));
         
         // Clear validation error when field is updated
         if (formErrors[name]) {
@@ -89,6 +80,12 @@ function BudgetForm({ onBudgetAdded }) {
             ...formData,
             limit: parseFloat(formData.limit)
         };
+        
+        // If the form uses "notes" but the schema uses "description"
+        if (budgetData.notes && !budgetData.description) {
+            budgetData.description = budgetData.notes;
+            delete budgetData.notes;
+        }
         
         try {
             await createBudget(budgetData);
