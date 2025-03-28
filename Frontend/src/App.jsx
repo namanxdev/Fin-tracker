@@ -8,6 +8,7 @@ import DashboardPage from './pages/Dashboard/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Header from './Components/Layout/Header';
+import Footer from './Components/Layout/Footer';
 import useAuthStore from './store/authStore';
 import useThemeStore from './store/themeStore';
 import { useEffect } from 'react';
@@ -87,6 +88,7 @@ const AppLayout = () => {
           </div>
         )}
       </main>
+      <Footer />
     </div>
   );
 };

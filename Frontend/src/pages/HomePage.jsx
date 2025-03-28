@@ -659,6 +659,7 @@ function HomePage() {
 
     {/* FAQ Section */}
     <section 
+      id='faq'
       className={`py-24 relative ${
         isDark
           ? 'bg-[#020617]'
