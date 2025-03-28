@@ -2,6 +2,10 @@ import express from "express"
 import connectDb from "./Config/db.js"
 import cors from "cors"
 
+import passport from 'passport';
+import setupPassport from './Config/passport.js';
+import googleAuthRoutes from './Routes/googleauthRoute.js';
+
 import userRoutes from "./routes/userRoutes.js" 
 import expenseRoutes from "./Routes/expenseRoutes.js"
 import budgetRoutes from "./Routes/budgetRoutes.js"
@@ -19,6 +23,10 @@ import dotenv from "dotenv"
 const app = express();
 
 dotenv.config();
+
+// Initialize passport before routes
+app.use(passport.initialize());
+setupPassport();
 
 app.get('/', (req, res) => {
     res.send("Server is running on port 3000");
@@ -45,12 +53,15 @@ app.use(cookieParser());
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 100
+    max: process.env.NODE_ENV === 'production' ? 100 : 1000, // Limit each IP to 100 requests per windowMs
+    message:"Too many Login attempts ,please try again after 15 minutes"
   });
   app.use('/api/', limiter);
 
 // Using Routes
 
+// Add the Google auth routes
+app.use('/api/auth', googleAuthRoutes);
 app.use('/api/User',userRoutes);
 app.use('/api/expenses',expenseRoutes);
 app.use('/api/budgets',budgetRoutes);
