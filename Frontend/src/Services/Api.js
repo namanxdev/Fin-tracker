@@ -11,7 +11,7 @@ const getBaseUrl = () => {
   // In production:
   // If deployed to same domain (recommended), use relative URL
   // If deployed to different domain, use environment variable
-  return import.meta.env.VITE_PROD_API_URL || '/api';
+  return import.meta.env.VITE_PROD_API_URL+'/api' || '/api';
 };
 
 const BASE_URL = getBaseUrl();
