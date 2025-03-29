@@ -52,13 +52,6 @@ function DashboardPage() {
   }, [loadData]);
 
   useEffect(() => {
-    console.log("Dashboard data status:", {
-      isNewUser,
-      hasIncome: summaryData?.income > 0,
-      hasExpenses: summaryData?.expenses > 0,
-      budgetCount: summaryData?.budgetCount,
-      budgetPerformance: budgetPerformance
-    });
   }, [isNewUser, summaryData, budgetPerformance]);
 
   // Handler for cash flow period changes

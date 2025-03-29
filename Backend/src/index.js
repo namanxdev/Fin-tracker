@@ -20,6 +20,7 @@ import mongoSanitize from 'express-mongo-sanitize';
 
 import dotenv from "dotenv"
 import {ExpressError} from "./utils/ErrorHandler.js";
+import compression from 'compression';
 
 // Only load dotenv in development
 if (process.env.NODE_ENV !== 'production') {
@@ -33,6 +34,7 @@ const app = express();
 
 app.use(passport.initialize());
 setupPassport();
+app.use(compression())
 
 app.get('/', (req, res) => {
     res.send("Server is running on port 3000");

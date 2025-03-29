@@ -95,7 +95,7 @@ const useDashboardStore = create((set, get) => ({
             set({ isLoading: true, error: null });
             const response = await api.get('/budget-performance');
             
-            console.log("Budget API response:", response.data);
+            // console.log("Budget API response:", response.data);
             
             // Pass the whole response object as-is
             set({ budgetPerformance: response.data, isLoading: false });

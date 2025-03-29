@@ -1,0 +1,13 @@
+{
+  "name": "financer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build":"npm install --prefix Backend && npm install --prefix Frontend && npm run build --prefix Frontend && npm run build --prefix Backend",
+    "start": "npm run start --prefix Backend"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

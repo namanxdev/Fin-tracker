@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Create axios instance with credentials support
 const api = axios.create({
-    baseURL: 'http://localhost:3000/api/User',
+    baseURL: import.meta.env.VITE_BASE_URL+'/User',
     withCredentials: true, // Important for cookies to be sent
 });
 

@@ -1,6 +1,7 @@
 // src/store/themeStore.js
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { toast } from 'react-hot-toast';
 
 const useThemeStore = create(
     persist(
@@ -19,6 +20,32 @@ const useThemeStore = create(
         // Toggle between light and dark
         toggleTheme: () => {
             const newTheme = get().theme === 'light' ? 'dark' : 'light';
+            if(newTheme === 'dark') {
+                toast('Hello Darkness!',
+                        {
+                        icon: '🌙',
+                        style: {
+                            borderRadius: '10px',
+                            background: '#333',
+                            color: '#fff',
+                        },
+                        }
+                    );
+            }
+            else {
+                toast('Hello Sunshine!', 
+                    {
+                    icon: '☀️',
+                    style: {
+                        borderRadius: '10px',
+                        background: '#f8fafc', // Light gray background
+                        color: '#334155',      // Slate-700 text
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        border: '1px solid #e2e8f0' // Subtle border
+                    },
+                    }
+                )
+            }
             set({ theme: newTheme });
             updateThemeInDOM(newTheme);
         },
