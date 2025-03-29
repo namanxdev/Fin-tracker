@@ -105,7 +105,7 @@ app.use('/api/financial', financialRoutes);
 
 if(process.env.NODE_ENV === 'production') {
     // Serve static files from frontend build
-    const staticPath = path.join(__dirname, 'Frontend/dist');
+    const staticPath = path.join(__dirname, '../Frontend/dist');
     console.log('Serving static files from:', staticPath);
     
     app.use(express.static(staticPath));
