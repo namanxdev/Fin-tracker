@@ -17,6 +17,7 @@
     "daisyui": "^5.0.4",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
+    "financer": "file:..",
     "framer-motion": "^12.6.2",
     "lucide-react": "^0.482.0",
     "react": "^19.0.0",

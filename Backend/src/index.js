@@ -21,6 +21,7 @@ import mongoSanitize from 'express-mongo-sanitize';
 import dotenv from "dotenv"
 import {ExpressError} from "./utils/ErrorHandler.js";
 import compression from 'compression';
+import path from 'path';
 
 // Only load dotenv in development
 if (process.env.NODE_ENV !== 'production') {
@@ -30,6 +31,10 @@ if (process.env.NODE_ENV !== 'production') {
     dotenv.config();
 }
 
+const PORT = process.env.PORT;
+const __dirname = path.resolve();
+
+
 const app = express();
 
 app.use(passport.initialize());
@@ -37,7 +42,7 @@ setupPassport();
 app.use(compression())
 
 app.get('/', (req, res) => {
-    res.send("Server is running on port 3000");
+    res.send("Server is running on port " + PORT);
 });
 
 app.use(cors({
@@ -97,6 +102,14 @@ app.use('/api/expenses',expenseRoutes);
 app.use('/api/budgets',budgetRoutes);
 app.use('/api/incomes',incomeRoutes);
 app.use('/api/financial', financialRoutes);
+
+if(process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../Frontend/dist')));
+
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, '../Frontend','dist','index.html'));
+    });
+}
 
 // Error handling middleware (always place it after your routes)
 app.use(errorHandler);

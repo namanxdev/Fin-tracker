@@ -1,12 +1,7 @@
 import { create } from "zustand";
-import axios from "axios";
+import {Budgetapi as api} from '../Services/Api'
 import { toast } from "react-hot-toast";
 
-// Create API instance
-const api = axios.create({
-    baseURL: import.meta.env.VITE_BASE_URL+'/budgets',
-    withCredentials: true,
-});
 
 // Error handler function
 const handleApiError = (error, defaultMessage, set) => {

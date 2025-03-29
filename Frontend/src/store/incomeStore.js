@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { api, handleApiError } from "../Services/IncomeApi";
+import {Incomeapi as api ,handleApiError} from '../Services/Api'
 import { format, subMonths } from 'date-fns';
 
 // Zustand store for managing income data

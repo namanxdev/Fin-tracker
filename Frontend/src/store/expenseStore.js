@@ -1,11 +1,5 @@
 import { create } from 'zustand';
-import axios from 'axios';
-
-// Create axios instance with credentials support
-const api = axios.create({
-    baseURL: import.meta.env.VITE_BASE_URL+'/expenses',
-    withCredentials: true, // Important for cookies to be sent
-});
+import {Expenseapi as api} from '../Services/Api'
 
 // Centralized error handling function
 const handleApiError = (error, defaultMessage, set) => {

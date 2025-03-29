@@ -1,11 +1,6 @@
 import { create } from 'zustand';
-import axios from 'axios';
+import {Authapi as api} from '../Services/Api'
 
-// Create axios instance with credentials support
-const api = axios.create({
-    baseURL: import.meta.env.VITE_BASE_URL+'/User',
-    withCredentials: true, // Important for cookies to be sent
-});
 
 const useAuthStore = create((set, get) => ({
     user: null,
