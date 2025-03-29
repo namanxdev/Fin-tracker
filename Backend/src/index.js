@@ -46,11 +46,12 @@ setupPassport();
 app.use(compression())
 
 app.use(cors({
-    // origin: process.env.FRONTEND_URL,
-    origin: process.env.FRONTEND_URL,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    // allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
+  origin: process.env.NODE_ENV === 'production' 
+    ? 'https://fintracker-3jn2.onrender.com' 
+    : process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 connectDb();
