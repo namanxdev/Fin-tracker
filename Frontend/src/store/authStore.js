@@ -74,21 +74,24 @@ const useAuthStore = create((set, get) => ({
             // Set loading to true at the start
             set({ isAuthLoading: true });
             
-            const response = await api.get('/auth/check');
-            if (response.data.authenticated) {
+            // Use the profile endpoint instead of the root endpoint
+            const response = await api.get('/profile');
+            
+            // User is authenticated if we get a valid response
+            // Your getUserProfile endpoint returns the user object directly
+            if (response.data) {
                 set({ 
                     isAuthenticated: true,
-                    user: response.data.user
+                    user: response.data, // Your endpoint returns user data directly
+                    isAuthLoading: false
                 });
             } else {
-                set({ isAuthenticated: false, user: null });
+                set({ isAuthenticated: false, user: null, isAuthLoading: false });
             }
         } catch (error) {
             console.error('Auth check failed:', error);
-            set({ isAuthenticated: false, user: null });
-        } finally {
-            // Always set loading to false when done
-            set({ isAuthLoading: false });
+            // If we get an error (like 401 unauthorized), user is not authenticated
+            set({ isAuthenticated: false, user: null, isAuthLoading: false });
         }
     },
 

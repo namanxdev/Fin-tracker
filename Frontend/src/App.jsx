@@ -37,7 +37,7 @@ const ProtectedRoute = ({children}) => {
   return children;
 }
 
-// Create a layout component to handle the location check
+// In App.jsx
 const AppLayout = () => {
   const location = useLocation();
   const isDark = useThemeStore((state) => state.isDark());
@@ -45,12 +45,12 @@ const AppLayout = () => {
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen overflow-x-hidden">
       {/* Background for dark and light modes - only shown on non-homepage routes */}
       {!isHomePage && (
         <>
           {isDark ? (
-            <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
+            <div className="absolute inset-0 -z-10 h-full w-full [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
           ) : (
             <div className="absolute inset-0 -z-10 h-full w-full bg-white [background:radial-gradient(125%_125%_at_50%_10%,#fff_40%,#63e_100%)]"></div>
           )}
@@ -58,13 +58,11 @@ const AppLayout = () => {
       )}
 
       <Header />
-      <main className="flex-grow">
+      <main className="flex-grow w-full">
         {/* Use Outlet instead of nested Routes */}
         <Outlet />
       </main>
-      {/* Only render footer if NOT on auth pages */}
-      {/* {!isAuthPage && <Footer />} */}
-      <Footer/>
+      <Footer />
     </div>
   );
 };
@@ -84,7 +82,7 @@ function App() {
       <Toaster
         position="top-right"
         toastOptions={{
-          duration: 1500,
+          duration: 1000,
           success: {
             style: {
               background: '#10b981',

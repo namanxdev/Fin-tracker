@@ -151,7 +151,7 @@ function BudgetPage() {
                 {/* Period & Refresh Controls */}
                 <div className="flex justify-between items-center mb-6">
                     <div className="flex items-center">
-                        <span className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-800'}`}>
+                        <span className={`text-lg font-semibold ml-2 ${isDark ? 'text-white' : 'text-gray-800'}`}>
                             {getPeriodDisplay(uiState.selectedPeriod)} Budget Overview
                         </span>
                         <button
