@@ -1,11 +1,3 @@
-import LoginPage from './pages/Auth/LoginPage'
-import RegisterPage from './pages/Auth/RegisterPage';
-import ExpensesPage from './pages/ExpensesPage';
-import IncomePage from './pages/IncomePage';
-import HomePage from './pages/HomePage';
-import BudgetPage from './pages/BudgetPage';
-import DashboardPage from './pages/Dashboard/DashboardPage';
-import ProfilePage from './pages/ProfilePage';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet } from "react-router-dom";
 import Header from './Components/Layout/Header';
 import Footer from './Components/Layout/Footer';
@@ -13,7 +5,16 @@ import useAuthStore from './store/authStore';
 import useThemeStore from './store/themeStore';
 import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
-import Settings from './pages/Settings';
+
+import {BudgetPage,
+  DashboardPage,
+  ExpensesPage,
+  HomePage,
+  IncomePage,
+  LoginPage,
+  ProfilePage,
+  RegisterPage,
+  Settings} from './pages'
 
 // TODO:  add payment methods 
 const ProtectedRoute = ({children}) => {

@@ -9,11 +9,11 @@ import {
 import { Link } from 'react-router-dom';
 import useDashboardStore from '../../store/dashboardStore';
 import useThemeStore from '../../store/themeStore';
-import SummaryCard from '../../components/Dashboard/SummaryCard';
+import SummaryCard from '../../Components/Dashboard/SummaryCard';
 import CashFlowChart from '../../components/Dashboard/CashFlowChart';
-import SavingsAnalysis from '../../components/Dashboard/SavingsAnalysis';
+import SavingsAnalysis from '../../Components/Dashboard/SavingsAnalysis';
 import BudgetPerformance from '../../components/Dashboard/BudgetPerformance';
-import TopCategoriesChart from '../../components/Dashboard/TopCategoriesChart';
+import TopCategoriesChart from '../../Components/Dashboard/TopCategoriesChart';
 import DashboardCard from '../../components/Dashboard/DashboardCard';
 import DashboardTips from '../../Components/Dashboard/DashboardTips';
 import UpcomingBills from '../../Components/Dashboard/UpcomingBills';
@@ -50,6 +50,16 @@ function DashboardPage() {
     // Load all dashboard data when the component mounts or timeRange changes
     loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    console.log("Dashboard data status:", {
+      isNewUser,
+      hasIncome: summaryData?.income > 0,
+      hasExpenses: summaryData?.expenses > 0,
+      budgetCount: summaryData?.budgetCount,
+      budgetPerformance: budgetPerformance
+    });
+  }, [isNewUser, summaryData, budgetPerformance]);
 
   // Handler for cash flow period changes
   const handleCashFlowPeriodChange = async (newMonths) => {

@@ -278,8 +278,7 @@ export const getBudgetPerformance = async (req, res, next) => {
         
         // Get all active budgets
         const budgets = await Budget.find({ 
-            user: userId,
-            isActive: true
+            user: userId
         });
         
         if (!budgets || budgets.length === 0) {

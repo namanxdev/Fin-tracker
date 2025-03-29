@@ -39,9 +39,9 @@ export const expenseSchema = ExtendedJoi.object({
 export const budgetSchema = ExtendedJoi.object({
   category: ExtendedJoi.string().required().escapeHTML(),
   limit: ExtendedJoi.number().required().min(0),
-  period: ExtendedJoi.string().valid('monthly', 'weekly', 'yearly').default('monthly'),
-  startDate: ExtendedJoi.date().allow(null),
-  endDate: ExtendedJoi.date().allow(null),
+  period: ExtendedJoi.string().valid('daily','monthly', 'weekly', 'yearly','quarterly').default('monthly'),
+  startDate: ExtendedJoi.date().allow(null,''),
+  endDate: ExtendedJoi.date().allow(null,''),
   rollover: ExtendedJoi.boolean().default(false),
   description: ExtendedJoi.string().allow('').escapeHTML()
 });
@@ -52,14 +52,14 @@ export const incomeSchema = ExtendedJoi.object({
   category: ExtendedJoi.string().required().escapeHTML(),
   description: ExtendedJoi.string().allow('').escapeHTML(),
   date: ExtendedJoi.date().allow(null),
-  source: ExtendedJoi.string().required().escapeHTML(),
+  source: ExtendedJoi.string().allow('').optional().escapeHTML(),
   isRecurring: ExtendedJoi.boolean().default(false),
   recurringFrequency: ExtendedJoi.string().valid('daily', 'weekly', 'monthly', 'yearly', 'none').default('none')
 });
 
 // User registration schema
 export const userRegisterSchema = ExtendedJoi.object({
-  username: ExtendedJoi.string().required().escapeHTML(),
+  name: ExtendedJoi.string().required().escapeHTML(),
   email: ExtendedJoi.string().email().required().escapeHTML(),
   password: ExtendedJoi.string().min(8).required()
 });

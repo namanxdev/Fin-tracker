@@ -19,10 +19,17 @@ import rateLimit from 'express-rate-limit';
 import mongoSanitize from 'express-mongo-sanitize';
 
 import dotenv from "dotenv"
+import {ExpressError} from "./utils/ErrorHandler.js";
+
+// Only load dotenv in development
+if (process.env.NODE_ENV !== 'production') {
+    dotenv.config();
+} else {
+    // Empty config() call ensures dotenv is initialized
+    dotenv.config();
+}
 
 const app = express();
-
-dotenv.config();
 
 app.use(passport.initialize());
 setupPassport();
@@ -41,21 +48,43 @@ app.use(cors({
 
 connectDb();
 
-app.use(helmet({
-    contentSecurityPolicy: false,
+// Enhanced helmet configuration based on environment
+if (process.env.NODE_ENV === 'production') {
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:","https://res.cloudinary.com"]
+      }
+    }
+  }));
+
+
+  app.set('trust proxy', 1);
+} else {
+  app.use(helmet({
+    contentSecurityPolicy: false
+  }));
+}
+
+
+app.use(mongoSanitize({
+  replaceWith: '_'
 }));
-app.use(mongoSanitize());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 
-// const limiter = rateLimit({
-//     windowMs: 15 * 60 * 1000,
-//     max: process.env.NODE_ENV === 'production' ? 100 : 10000, // Limit each IP to 100 requests per windowMs
-//     message:"Too many Login attempts ,please try again after 15 minutes"
-//   });
-//   app.use('/api/', limiter);
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: process.env.NODE_ENV === 'production' ? 100 : 1000, // Limit each IP to 100 requests per windowMs
+    message:"Too many Login attempts ,please try again after 15 minutes"
+  });
+  app.use('/api/', limiter);
 
 // Using Routes
 
@@ -69,6 +98,21 @@ app.use('/api/financial', financialRoutes);
 
 // Error handling middleware (always place it after your routes)
 app.use(errorHandler);
+
+app.all('*',(req,res,next)=>{
+    // res.send('404!!!')
+    next(new ExpressError('Page not found',404));
+})
+
+app.use((err,req,res,next)=>{
+    const {statusCode = 500 } = err;
+    if(!err.message) err.message = 'Oh no, Something Went Wrong!!'
+    res.status(statusCode).json({
+      success: false,
+      error: err.message,
+      stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack
+    });
+})
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);

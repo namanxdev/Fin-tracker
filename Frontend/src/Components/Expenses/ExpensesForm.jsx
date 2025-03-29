@@ -60,9 +60,9 @@ function ExpensesForm({ onExpenseAdded }) {
                 paymentMethod: data.paymentMethod || 'Cash' // Add payment method to submission
             };
             
-            console.log("Expense data to submit:", expenseData);
+            // console.log("Expense data to submit:", expenseData);
             const result = await createExpense(expenseData);
-            console.log("Backend response:", result);
+            // console.log("Backend response:", result);
             toast.success("Expense added successfully");
             reset();
     

@@ -90,10 +90,8 @@ function BudgetManage({ refreshTrigger, onBudgetUpdated }) {
         }
         
         try {
-            // Get form data directly
             const form = e.target;
             
-            // Format dates properly
             const startDate = form.startDate.value;
             const endDate = form.endDate.value || undefined;
             
@@ -103,8 +101,7 @@ function BudgetManage({ refreshTrigger, onBudgetUpdated }) {
                 period: form.period.value,
                 startDate,
                 endDate,
-                notes: form.notes.value
-                // Let the backend use default color if needed
+                description: form.notes.value  // Changed from notes to description
             };
             
             await updateBudget(currentBudget._id, budgetData);
@@ -422,7 +419,7 @@ function BudgetManage({ refreshTrigger, onBudgetUpdated }) {
                                         min={currentBudget.startDate ? new Date(currentBudget.startDate).toISOString().split('T')[0] : ''}
                                     />
                                     <p className="text-xs text-gray-500 mt-1">
-                                        Leave blank for recurring budgets
+                                        
                                     </p>
                                 </div>
                             </div>
