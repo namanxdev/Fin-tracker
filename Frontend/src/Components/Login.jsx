@@ -212,7 +212,7 @@ function LoginForm() {
             {/* Google Sign-in Button */}
             <button
                 type="button"
-                onClick={() => window.location.href = 'http://localhost:3000/api/auth/google'}
+                onClick={() => window.location.href = `${window.location.origin}/api/auth/google`}
                 className={`w-full flex items-center justify-center gap-2 py-2 px-4 border rounded-md transition-colors text-sm md:text-base
                     ${isDark 
                     ? 'bg-gray-800 border-gray-700 hover:bg-gray-700 text-white' 

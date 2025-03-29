@@ -217,7 +217,7 @@ function RegisterForm() {
                 {/* Google Sign-up Button - add this */}
                 <button
                     type="button"
-                    onClick={() => window.location.href = 'http://localhost:3000/api/auth/google'}
+                    onClick={() => window.location.href = `${window.location.origin}/api/auth/google`}
                     className={`w-full flex items-center justify-center gap-2 py-2 px-4 border rounded-md transition-colors
                         ${isDark 
                         ? 'bg-gray-700 border-gray-600 hover:bg-gray-600 text-white' 
