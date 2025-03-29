@@ -29,11 +29,15 @@ if (process.env.NODE_ENV !== 'production') {
 } else {
     // Empty config() call ensures dotenv is initialized
     dotenv.config();
+    console.log('Running in production mode');
 }
 
 const PORT = process.env.PORT;
 const __dirname = path.resolve();
 
+// Log environment for debugging
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`Current directory: ${__dirname}`);
 
 const app = express();
 
@@ -104,11 +108,32 @@ app.use('/api/incomes',incomeRoutes);
 app.use('/api/financial', financialRoutes);
 
 if(process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../Frontend/dist')));
-
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, '../Frontend','dist','index.html'));
-    });
+    // Try multiple possible paths to find the frontend files
+    const possiblePaths = [
+        path.join(__dirname, 'Frontend/dist'),
+        path.join(__dirname, '../Frontend/dist'),
+    ];
+    
+    // Log all possible paths we're checking
+    console.log('Checking these paths for frontend files:');
+    possiblePaths.forEach(p => console.log(p));
+    
+    // Use the first path that exists
+    for (const frontendPath of possiblePaths) {
+        try {
+            if (require('fs').existsSync(frontendPath)) {
+                console.log(`Found frontend at: ${frontendPath}`);
+                app.use(express.static(frontendPath));
+                
+                app.get('*', (req, res) => {
+                    res.sendFile(path.join(frontendPath, 'index.html'));
+                });
+                break;
+            }
+        } catch (error) {
+            console.error(`Error checking path ${frontendPath}:`, error);
+        }
+    }
 }
 
 // Error handling middleware (always place it after your routes)
