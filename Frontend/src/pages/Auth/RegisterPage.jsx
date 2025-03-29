@@ -1,22 +1,23 @@
 import React from 'react';
+import RegisterForm from '../../Components/Register';
 import AuthCardLeft from '../../Components/AuthCardLeft';
 import AuthCardRight from '../../Components/AuthCardRight';
-import RegisterForm from '../../Components/Register';
+import AuthContainer from '../../Components/AuthContainer';
 
 function RegisterPage() {
   return (
-    <div className="flex h-screen w-full">
+    <AuthContainer>
       <AuthCardLeft />
       <AuthCardRight 
-        title="Create Account"
-        subtitle="Join thousands of users managing their finances"
-        footerText="Already have an account?"
-        linkText="Sign in"
+        title="Create Account" 
+        subtitle="Sign up to get started with FinTrack" 
+        footerText="Already have an account?" 
+        linkText="Login" 
         linkTo="/login"
       >
         <RegisterForm />
       </AuthCardRight>
-    </div>
+    </AuthContainer>
   );
 }
 

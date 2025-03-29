@@ -3,29 +3,28 @@ import { Link } from 'react-router-dom';
 import useThemeStore from '../store/themeStore';
 
 function AuthCardRight({ children, title, subtitle, footerText, linkText, linkTo }) {
-  // Fix: Call isDark as a function
   const isDark = useThemeStore((state) => state.isDark());
 
   return (
-    <div className={`w-1/2 flex flex-col items-center justify-center px-8 py-12 relative
+    <div className={`w-full lg:w-1/2 flex flex-col items-center justify-center px-4 md:px-6 lg:px-8 py-8 lg:py-12 relative
       ${isDark ? 'bg-gray-900' : 'bg-white'}`}>
       
-      {/* Top decorative element */}
-      <div className={`absolute top-0 right-0 w-32 h-32 rounded-bl-full
+      {/* Top decorative element - smaller on mobile */}
+      <div className={`absolute top-0 right-0 w-20 h-20 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-bl-full
         ${isDark ? 'bg-emerald-900/50' : 'bg-emerald-100'}`}></div>
       
       {/* Main content container */}
       <div className="w-full max-w-md z-10">
         {/* Header section */}
-        <div className="mb-8 text-center">
-          <h2 className={`text-3xl font-bold 
+        <div className="mb-6 md:mb-8 text-center">
+          <h2 className={`text-2xl md:text-3xl font-bold 
             ${isDark ? 'text-white' : 'text-gray-800'}`}>{title}</h2>
           <p className={`mt-2
             ${isDark ? 'text-green-300' : 'text-green-600'}`}>{subtitle}</p>
         </div>
         
         {/* Form container */}
-        <div className={`rounded-xl shadow-md p-6 border
+        <div className={`rounded-xl shadow-md p-4 md:p-6 border
           ${isDark 
             ? 'bg-gray-800 border-gray-700' 
             : 'bg-white border-gray-100'}`}>
@@ -45,8 +44,8 @@ function AuthCardRight({ children, title, subtitle, footerText, linkText, linkTo
           </p>
         </div>
         
-        {/* Feature bullets */}
-        <div className="mt-12">
+        {/* Feature bullets - hide on small screens */}
+        <div className="mt-8 lg:mt-12 hidden md:block">
           <h3 className={`text-sm font-medium mb-3
             ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
             FinTrack offers:
@@ -70,8 +69,8 @@ function AuthCardRight({ children, title, subtitle, footerText, linkText, linkTo
         </div>
       </div>
       
-      {/* Bottom decorative element */}
-      <div className={`absolute bottom-0 left-0 w-24 h-24 rounded-tr-full
+      {/* Bottom decorative element - smaller on mobile */}
+      <div className={`absolute bottom-0 left-0 w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-tr-full
         ${isDark ? 'bg-emerald-900/50' : 'bg-emerald-100'}`}></div>
     </div>
   );

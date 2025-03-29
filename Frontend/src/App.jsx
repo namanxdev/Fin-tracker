@@ -6,7 +6,7 @@ import HomePage from './pages/HomePage';
 import BudgetPage from './pages/BudgetPage';
 import DashboardPage from './pages/Dashboard/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet } from "react-router-dom";
 import Header from './Components/Layout/Header';
 import Footer from './Components/Layout/Footer';
 import useAuthStore from './store/authStore';
@@ -15,10 +15,21 @@ import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import Settings from './pages/Settings';
 
-// TODO: make all pages responsive add payment methods and add a settings page
+// TODO:  add payment methods 
 const ProtectedRoute = ({children}) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-
+  const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
+  
+  // Show loading indicator while checking authentication
+  if (isAuthLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+      </div>
+    );
+  }
+  
+  // Only redirect when we're sure the user isn't authenticated
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
@@ -31,9 +42,10 @@ const AppLayout = () => {
   const location = useLocation();
   const isDark = useThemeStore((state) => state.isDark());
   const isHomePage = location.pathname === '/';
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
   return (
-    <div className="relative min-h-screen">
+    <div className="flex flex-col min-h-screen">
       {/* Background for dark and light modes - only shown on non-homepage routes */}
       {!isHomePage && (
         <>
@@ -46,49 +58,13 @@ const AppLayout = () => {
       )}
 
       <Header />
-      <main className="min-h-screen">
-        {isHomePage ? (
-          <HomePage />
-        ) : (
-          <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <DashboardPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/expenses" element={
-                <ProtectedRoute>
-                  <ExpensesPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/income" element={
-                <ProtectedRoute>
-                  <IncomePage />
-                </ProtectedRoute>
-              } />
-              <Route path="/budget" element={
-                <ProtectedRoute>
-                  <BudgetPage />
-                </ProtectedRoute>
-              } />
-              <Route path="/settings" element={
-                <ProtectedRoute>
-                  <Settings />
-                </ProtectedRoute>
-              } />
-              <Route path="/profile" element={
-                <ProtectedRoute>
-                  <ProfilePage />
-                </ProtectedRoute>
-              } />
-            </Routes>
-          </div>
-        )}
+      <main className="flex-grow">
+        {/* Use Outlet instead of nested Routes */}
+        <Outlet />
       </main>
-      <Footer />
+      {/* Only render footer if NOT on auth pages */}
+      {/* {!isAuthPage && <Footer />} */}
+      <Footer/>
     </div>
   );
 };
@@ -125,8 +101,44 @@ function App() {
       />
       <Router>
         <Routes>
-          <Route path="/" element={<AppLayout />} />
-          <Route path="/*" element={<AppLayout />} />
+          {/* Proper nested routes structure */}
+          <Route element={<AppLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/expenses" element={
+              <ProtectedRoute>
+                <ExpensesPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/income" element={
+              <ProtectedRoute>
+                <IncomePage />
+              </ProtectedRoute>
+            } />
+            <Route path="/budget" element={
+              <ProtectedRoute>
+                <BudgetPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            } />
+            {/* Catch-all route */}
+            <Route path="*" element={<HomePage />} />
+          </Route>
         </Routes>
       </Router>
     </>

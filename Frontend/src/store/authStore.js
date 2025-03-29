@@ -12,6 +12,7 @@ const useAuthStore = create((set, get) => ({
     isAuthenticated: false,
     isLoading: false,
     error: null,
+    isAuthLoading: true, // Add this line - start with loading state
     
     login: async (email, password) => {
         set({ isLoading: true, error: null });
@@ -69,25 +70,27 @@ const useAuthStore = create((set, get) => ({
     
     // Check authentication status by calling the protected /profile endpoint
     checkAuth: async () => {
-        set({ isLoading: true, error: null });
         try {
-        const response = await api.get('/profile');
-        set({ 
-            user: response.data, 
-            isAuthenticated: true, 
-            isLoading: false 
-        });
+            // Set loading to true at the start
+            set({ isAuthLoading: true });
+            
+            const response = await api.get('/auth/check');
+            if (response.data.authenticated) {
+                set({ 
+                    isAuthenticated: true,
+                    user: response.data.user
+                });
+            } else {
+                set({ isAuthenticated: false, user: null });
+            }
         } catch (error) {
-        const errorMessage = error.response?.data?.message || "Failed to authenticate";
-        console.error("Auth check failed:", errorMessage);
-        set({
-            user: null,
-            isAuthenticated: false,
-            isLoading: false,
-            error: errorMessage,
-        });
-    }
-  },
+            console.error('Auth check failed:', error);
+            set({ isAuthenticated: false, user: null });
+        } finally {
+            // Always set loading to false when done
+            set({ isAuthLoading: false });
+        }
+    },
 
     // New methods for settings page
     updateProfile: async ({ name, email }) => {

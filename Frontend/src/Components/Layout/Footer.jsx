@@ -7,7 +7,7 @@ const Footer = () => {
 
   return (
     <footer 
-      className={`relative pt-12 pb-8 overflow-hidden ${
+      className={`relative pt-8 pb-8 overflow-hidden ${
         isDark
           ? 'bg-[#020617]'
           : 'bg-gray-50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]'

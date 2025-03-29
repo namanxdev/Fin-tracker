@@ -81,7 +81,6 @@ function RegisterForm() {
 
     return (
         <div className={`w-full ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
-            <Toaster />
             
             <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                 {/* Show general form errors */}
