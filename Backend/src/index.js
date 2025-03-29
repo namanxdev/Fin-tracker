@@ -45,10 +45,6 @@ app.use(passport.initialize());
 setupPassport();
 app.use(compression())
 
-app.get('/', (req, res) => {
-    res.send("Server is running on port " + PORT);
-});
-
 app.use(cors({
     // origin: process.env.FRONTEND_URL,
     origin: process.env.FRONTEND_URL,
@@ -108,36 +104,20 @@ app.use('/api/incomes',incomeRoutes);
 app.use('/api/financial', financialRoutes);
 
 if(process.env.NODE_ENV === 'production') {
-    // Try multiple possible paths to find the frontend files
-    const possiblePaths = [
-        path.join(__dirname, 'Frontend/dist'),
-        path.join(__dirname, '../Frontend/dist'),
-    ];
+    // Serve static files from frontend build
+    const staticPath = path.join(__dirname, 'Frontend/dist');
+    console.log('Serving static files from:', staticPath);
     
-    // Log all possible paths we're checking
-    console.log('Checking these paths for frontend files:');
-    possiblePaths.forEach(p => console.log(p));
+    app.use(express.static(staticPath));
     
-    // Use the first path that exists
-    for (const frontendPath of possiblePaths) {
-        try {
-            if (require('fs').existsSync(frontendPath)) {
-                console.log(`Found frontend at: ${frontendPath}`);
-                app.use(express.static(frontendPath));
-                
-                app.get('*', (req, res) => {
-                    res.sendFile(path.join(frontendPath, 'index.html'));
-                });
-                break;
-            }
-        } catch (error) {
-            console.error(`Error checking path ${frontendPath}:`, error);
+    // Serve index.html for any routes not matched by API or static files
+    app.get('*', (req, res) => {
+        if (!req.path.startsWith('/api')) {
+            res.sendFile(path.join(staticPath, 'index.html'));
         }
-    }
+    });
 }
 
-// Error handling middleware (always place it after your routes)
-app.use(errorHandler);
 
 app.all('*',(req,res,next)=>{
     // res.send('404!!!')
@@ -155,5 +135,5 @@ app.use((err,req,res,next)=>{
 })
 
 app.listen(process.env.PORT, () => {
-    console.log(`Server is running on port ${process.env.PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
