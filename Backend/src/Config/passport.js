@@ -4,9 +4,8 @@ import User from '../Models/UserModel.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
-const callbackURL = process.env.NODE_ENV === 'production'
-  ? 'https://fintracker-3jn2.onrender.com/api/auth/google/callback'
-  : '/api/auth/google/callback';
+const callbackURL = 'https://fintracker-3jn2.onrender.com/api/auth/google/callback'
+  
 
 
 const setupPassport = () => {

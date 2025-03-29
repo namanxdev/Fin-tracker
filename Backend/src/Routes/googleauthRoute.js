@@ -19,11 +19,15 @@ router.get('/google/callback',
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       sameSite: 'strict',
-      // secure: process.env.NODE_ENV === 'production',
+      secure: process.env.NODE_ENV === 'production',
     });
     
-    // Redirect to frontend
-    res.redirect(process.env.FRONTEND_URL + '/dashboard');
+     // Use proper frontend URL based on environment
+      const redirectUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://fintracker-3jn2.onrender.com/dashboard'
+      : process.env.FRONTEND_URL + '/dashboard';
+      
+    res.redirect(redirectUrl);
   }
 );
 
