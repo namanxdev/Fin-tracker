@@ -86,7 +86,7 @@ Run the backend server:
 2. Ensure MongoDB is hosted on **MongoDB Atlas**.
 
 ### 🌎 Frontend:
-1. Deploy to **Vercel/Netlify**.
+1. Deploy to **Vercel/Netlify/Render**.
 2. Update backend URL in `.env` or `config.js` file.
 
 ---
