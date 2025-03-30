@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, useMotionTemplate, useMotionValue, animate } from 'framer-motion';
 import useThemeStore from '../store/themeStore';
 import { ArrowRight, ArrowUpRight, PieChart, BarChart3, LineChart, Check, CreditCard, Wallet, TrendingUp, Shield, RefreshCw } from 'lucide-react';
@@ -19,6 +19,7 @@ function HomePage() {
       ${isDark?'#020617':'#fff'} 50%,${color})`;
   const border = useMotionTemplate`1px solid ${color}`;
   const boxShadow = useMotionTemplate`0px 4px 24px ${color}`;   
+  const navigate = useNavigate();
 
   useEffect(() => {
     animate(color, COLORS, {
@@ -51,6 +52,7 @@ function HomePage() {
             Your all-in-one finance management app.
           </p>
           <motion.button 
+            onClick={() => navigate('/register')}
             className={`group relative flex w-fit items-center
               gap-1.5 rounded-full bg-gray-950/10 px-6 py-3
               ${isDark?'text-gray-50':'text-gray-800'} transition-colors hover:bg-gray-950/50`}
@@ -65,21 +67,20 @@ function HomePage() {
               boxShadow,
             }}
           >
-            <Link to="/register" className='flex items-center gap-2'>
-              Start Tracking Now 
-              <motion.span
-                initial={{ x: 0 }}
-                className="inline-block"
-                whileHover={{ x: 3, transition: { repeat: Infinity, repeatType: "reverse", duration: 0.6 } }}
-              >
-                <ArrowRight className="h-5 w-5" />
-              </motion.span>
-            </Link>
+            Start Tracking Now 
+            <motion.span
+              initial={{ x: 0 }}
+              className="inline-block"
+              whileHover={{ x: 3, transition: { repeat: Infinity, repeatType: "reverse", duration: 0.6 } }}
+            >
+              <ArrowRight className="h-5 w-5" />
+            </motion.span>
           </motion.button>
           
+          
           {/* Floating decorations */}
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-blue-500/10 blur-3xl"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-emerald-500/10 blur-3xl"></div>
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
         </div>
       </motion.section>
 

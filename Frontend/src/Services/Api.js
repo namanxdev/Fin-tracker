@@ -49,8 +49,9 @@ const Budgetapi = axios.create({
     error => {
       // Handle authentication errors
       if (error.response?.status === 401 && window.location.pathname !== '/login') {
-        toast.error('Authentication failed. Please log in again.');
+        // toast.error('Please log in .');
         // Redirect to login
+        console.log('Redirecting to login due to 401 error');
         window.location.href = '/login';
       }
       return Promise.reject(error);

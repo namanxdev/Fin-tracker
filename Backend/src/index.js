@@ -46,7 +46,7 @@ setupPassport();
 app.use(compression())
 
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
+  origin: process.env.NODE_ENV !== 'production' 
     ? 'https://fintracker-3jn2.onrender.com' 
     : 'http://localhost:5173',
   credentials: true,
@@ -55,27 +55,26 @@ app.use(cors({
 }));
 
 connectDb();
-
-// Enhanced helmet configuration based on environment
 if (process.env.NODE_ENV === 'production') {
   app.use(helmet({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-inline'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", "data:","https://res.cloudinary.com"]
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        imgSrc: ["'self'", "data:", "https://res.cloudinary.com"]
       }
     }
   }));
 
-
-  app.set('trust proxy', 1);
+  app.set('trust proxy', 1);  
 } else {
   app.use(helmet({
     contentSecurityPolicy: false
   }));
 }
+
 
 
 app.use(mongoSanitize({

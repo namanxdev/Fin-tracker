@@ -27,6 +27,8 @@ function RegisterForm() {
     // Get the register function from auth store
     const register = useAuthStore((state) => state.register);
     
+    const navigate = useNavigate();
+
     const {
         register: registerField,
         handleSubmit,
