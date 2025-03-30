@@ -236,7 +236,7 @@ function ExpenseTransaction({ refreshTrigger, onExpenseUpdated }) {
     
     // Add className for sortable headers
     const getSortHeaderClass = (columnKey) => {
-        return `text-left cursor-pointer select-none hover:bg-opacity-10 hover:bg-gray-500 px-2 py-2 rounded ${
+        return `text-left cursor-pointer select-none  px-2 py-2 rounded ${
             sortConfig.key === columnKey 
                 ? isDark ? 'text-emerald-400' : 'text-emerald-600 font-medium'
                 : ''
@@ -296,8 +296,7 @@ function ExpenseTransaction({ refreshTrigger, onExpenseUpdated }) {
                                     <tr 
                                         key={expense._id || expense.id} 
                                         className={`
-                                            hover:bg-gray-100 dark:hover:bg-gray-700
-                                            ${isDark ? 'text-gray-200' : 'text-gray-800'}
+                                            ${isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-800 hover:bg-gray-300'}
                                             ${index % 2 === 0 ? isDark ? 'bg-gray-800' : 'bg-white' : isDark ? 'bg-gray-750' : 'bg-gray-50'}
                                         `}
                                     >

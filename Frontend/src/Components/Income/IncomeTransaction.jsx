@@ -243,7 +243,7 @@ function IncomeTransaction({ refreshTrigger, onIncomeUpdated }) {
                 <div className="overflow-x-auto">
                     <table className="table w-full">
                         <thead className={isDark ? 'bg-gray-700' : 'bg-gray-50'}>
-                            <tr>
+                            <tr className={isDark ? 'text-white' : 'text-black'}>
                                 <th className="w-10">#</th>
                                 <th className="cursor-pointer" onClick={() => requestSort('title')}>
                                     <div className="flex items-center space-x-1">
@@ -291,8 +291,7 @@ function IncomeTransaction({ refreshTrigger, onIncomeUpdated }) {
                                     <tr 
                                         key={income._id || income.id} 
                                         className={`
-                                            hover:bg-gray-100 dark:hover:bg-gray-700
-                                            ${isDark ? 'text-gray-200' : 'text-gray-800'}
+                                            ${isDark ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-800 hover:bg-gray-300'}
                                             ${index % 2 === 0 ? isDark ? 'bg-gray-800' : 'bg-white' : isDark ? 'bg-gray-750' : 'bg-gray-50'}
                                         `}
                                     >

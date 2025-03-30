@@ -84,14 +84,17 @@ function HomePage() {
       </motion.section>
 
       {/* Features Section */}
-      <section
-        className={`py-24 ${
+      <section className="py-24 relative">
+        {/* Background with mask (separate div) */}
+        <div className={`absolute inset-0 ${
           isDark
             ? 'bg-[#020617]'
             : 'bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]'
-        }`}
-      >
-        <div className="container mx-auto px-4">
+        } z-0`}></div>
+        
+        {/* Content container (above background) */}
+        <div className="container mx-auto px-4 relative z-10">
+          {/* Your existing content */}
           <div className="text-center mb-16">
             <h2
               className={`text-3xl font-bold mb-4 ${
@@ -109,7 +112,8 @@ function HomePage() {
               designed to help you track, manage, and grow your money.
             </p>
           </div>
-
+          
+          {/* Rest of your content */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Feature 1 */}
             <motion.div
