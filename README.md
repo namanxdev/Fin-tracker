@@ -110,5 +110,5 @@ This project is licensed under the **MIT License**.
 ---
 
 ## 📩 Contact
-For queries, reach out at **your.email@example.com** or [LinkedIn](https://linkedin.com/in/yourprofile).
+For queries, reach out at **namanguptabhopal@gmail.com** or [LinkedIn](https://www.linkedin.com/in/naman411/).
 
